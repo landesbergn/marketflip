@@ -1,12 +1,13 @@
 // components/TrendingGrid.tsx
 import { getTrendingMarkets } from "@/lib/polymarket";
+import type { FlippableMarket } from "@/lib/types";
 import { MarketCard } from "./MarketCard";
 import { StaleBanner } from "./StaleBanner";
 
 export const revalidate = 60;
 
 export async function TrendingGrid() {
-  let markets;
+  let markets: FlippableMarket[] = [];
   let stale = false;
   try {
     markets = await getTrendingMarkets(12, { next: { revalidate: 60 } });
