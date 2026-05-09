@@ -50,3 +50,37 @@ export async function getMarketBySlug(
   if (!Array.isArray(list) || list.length === 0) return null;
   return normalizeMarket(list[0]);
 }
+
+function normalizeEvent(e: GammaEvent): ParentEvent | null {
+  if (e.closed === true) return null;
+  const subMarkets = e.markets
+    .map((m) => {
+      const prices = parseJsonArray<string>(m.outcomePrices).map(Number);
+      const yesProbability = prices[0] ?? 0;
+      return m.closed === true
+        ? null
+        : { slug: m.slug, question: m.question, yesProbability };
+    })
+    .filter((x): x is NonNullable<typeof x> => x !== null)
+    .sort((a, b) => b.yesProbability - a.yesProbability);
+
+  return {
+    slug: e.slug,
+    question: e.title,
+    endDate: e.endDate ?? "",
+    url: `${POLYMARKET_BASE}/event/${e.slug}`,
+    subMarkets,
+  };
+}
+
+export async function getEventBySlug(
+  slug: string,
+  init?: RequestInit
+): Promise<ParentEvent | null> {
+  const list = await gammaFetch<GammaEvent[]>(
+    `/events?slug=${encodeURIComponent(slug)}`,
+    init
+  );
+  if (!Array.isArray(list) || list.length === 0) return null;
+  return normalizeEvent(list[0]);
+}

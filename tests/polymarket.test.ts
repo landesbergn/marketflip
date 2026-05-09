@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { getMarketBySlug } from "@/lib/polymarket";
+import { getMarketBySlug, getEventBySlug } from "@/lib/polymarket";
 
 const sampleGammaMarket = {
   id: "0x123",
@@ -78,5 +78,67 @@ describe("getMarketBySlug", () => {
     );
 
     await expect(getMarketBySlug("x")).rejects.toThrow(/Gamma/i);
+  });
+});
+
+const sampleGammaEvent = {
+  id: "ev1",
+  slug: "presidential-election-winner-2028",
+  title: "2028 US Presidential Election",
+  endDate: "2028-11-07T00:00:00Z",
+  active: true,
+  closed: false,
+  markets: [
+    {
+      id: "m1",
+      slug: "will-vance-win-2028",
+      question: "Will JD Vance win the 2028 election?",
+      outcomes: '["Yes","No"]',
+      outcomePrices: '["0.28","0.72"]',
+      active: true,
+      closed: false,
+    },
+    {
+      id: "m2",
+      slug: "will-newsom-win-2028",
+      question: "Will Gavin Newsom win the 2028 election?",
+      outcomes: '["Yes","No"]',
+      outcomePrices: '["0.18","0.82"]',
+      active: true,
+      closed: false,
+    },
+  ],
+};
+
+describe("getEventBySlug", () => {
+  it("normalizes an event with sub-markets sorted by yes probability", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () => [sampleGammaEvent],
+      })) as unknown as typeof fetch
+    );
+
+    const ev = await getEventBySlug("presidential-election-winner-2028");
+    expect(ev).not.toBeNull();
+    expect(ev!.subMarkets.length).toBe(2);
+    expect(ev!.subMarkets[0].slug).toBe("will-vance-win-2028");
+    expect(ev!.subMarkets[0].yesProbability).toBeCloseTo(0.28);
+    expect(ev!.subMarkets[1].slug).toBe("will-newsom-win-2028");
+  });
+
+  it("returns null for closed events", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () => [{ ...sampleGammaEvent, closed: true }],
+      })) as unknown as typeof fetch
+    );
+
+    expect(await getEventBySlug("x")).toBeNull();
   });
 });
