@@ -96,6 +96,8 @@ Three short sections shown after a simulation completes:
 | `/` | Server component | Trending block edge-cached 60s |
 | `/m/[slug]` | Server component | No cache (live odds on every load) |
 
+The `/m/[slug]` route accepts either a market slug (binary) or an event slug (multi-outcome). `lib/polymarket.ts` resolves the slug to one of two shapes — a single `FlippableMarket` or a `ParentEvent` containing sub-markets — and the page renders the appropriate component (binary coin vs candidate list).
+
 ### API routes
 
 | Route | Purpose | Caching |
