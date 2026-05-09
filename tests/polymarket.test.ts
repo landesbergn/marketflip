@@ -4,6 +4,7 @@ import {
   getEventBySlug,
   getTrendingMarkets,
   searchMarkets,
+  resolvePolymarketUrl,
 } from "@/lib/polymarket";
 
 const sampleGammaMarket = {
@@ -190,5 +191,38 @@ describe("searchMarkets", () => {
   it("returns [] for empty query", async () => {
     expect(await searchMarkets("")).toEqual([]);
     expect(await searchMarkets("   ")).toEqual([]);
+  });
+});
+
+describe("resolvePolymarketUrl", () => {
+  it("extracts a market slug from a /market/ URL", () => {
+    const r = resolvePolymarketUrl("https://polymarket.com/market/fed-rates-june-2026");
+    expect(r).toEqual({ kind: "market", slug: "fed-rates-june-2026" });
+  });
+
+  it("extracts an event slug from an /event/ URL", () => {
+    const r = resolvePolymarketUrl("https://polymarket.com/event/2028-presidential-election");
+    expect(r).toEqual({ kind: "event", slug: "2028-presidential-election" });
+  });
+
+  it("strips trailing slashes and query strings", () => {
+    const r = resolvePolymarketUrl("https://polymarket.com/market/fed-rates-june-2026/?ref=twitter");
+    expect(r).toEqual({ kind: "market", slug: "fed-rates-june-2026" });
+  });
+
+  it("accepts www. and http(s)", () => {
+    expect(resolvePolymarketUrl("http://www.polymarket.com/event/foo")).toEqual({
+      kind: "event",
+      slug: "foo",
+    });
+  });
+
+  it("returns null for non-polymarket hosts", () => {
+    expect(resolvePolymarketUrl("https://kalshi.com/market/foo")).toBeNull();
+  });
+
+  it("returns null for malformed URLs", () => {
+    expect(resolvePolymarketUrl("not a url")).toBeNull();
+    expect(resolvePolymarketUrl("https://polymarket.com/")).toBeNull();
   });
 });

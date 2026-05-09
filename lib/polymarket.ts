@@ -111,3 +111,22 @@ export async function searchMarkets(
     .map(normalizeMarket)
     .filter((m): m is FlippableMarket => m !== null);
 }
+
+export function resolvePolymarketUrl(input: string): ResolvedSlug | null {
+  let url: URL;
+  try {
+    url = new URL(input);
+  } catch {
+    return null;
+  }
+  const host = url.hostname.replace(/^www\./, "");
+  if (host !== "polymarket.com") return null;
+
+  const segments = url.pathname.split("/").filter(Boolean);
+  if (segments.length < 2) return null;
+
+  const [type, slug] = segments;
+  if (type === "market") return { kind: "market", slug };
+  if (type === "event") return { kind: "event", slug };
+  return null;
+}
