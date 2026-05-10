@@ -41,6 +41,11 @@ pnpm-debug.log*
 *.swp
 *.swo
 
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
 # Superpowers
 .superpowers/
 
