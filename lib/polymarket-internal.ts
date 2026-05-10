@@ -5,6 +5,7 @@ export type GammaMarket = {
   id: string;
   slug: string;
   question: string;
+  description?: string;
   /** JSON string, e.g. '["Yes","No"]'. */
   outcomes: string;
   /** JSON string, e.g. '["0.56","0.44"]'. */
@@ -26,11 +27,22 @@ export type GammaEvent = {
   id: string;
   slug: string;
   title: string;
+  description?: string;
   endDate?: string;
   active?: boolean;
   closed?: boolean;
   markets: GammaMarket[];
 };
+
+/**
+ * A binary market is "decided" when its YES side rounds to 0% or 100%.
+ * Decided markets aren't fun to flip on (the result is determined),
+ * so we filter them out of trending/search/event sub-market lists.
+ */
+export function isDecidedBinary(yesProbability: number): boolean {
+  const pct = Math.round(yesProbability * 100);
+  return pct === 0 || pct === 100;
+}
 
 export const GAMMA_BASE = "https://gamma-api.polymarket.com";
 export const POLYMARKET_BASE = "https://polymarket.com";

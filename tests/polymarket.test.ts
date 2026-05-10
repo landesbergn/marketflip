@@ -60,6 +60,42 @@ describe("getMarketBySlug", () => {
     expect(await getMarketBySlug("x")).toBeNull();
   });
 
+  it("returns null for already-decided binary markets (0/100)", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () => [
+          { ...sampleGammaMarket, outcomePrices: '["0.998","0.002"]' },
+        ],
+      })) as unknown as typeof fetch
+    );
+
+    expect(await getMarketBySlug("x")).toBeNull();
+  });
+
+  it("includes resolution-criteria description when present", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () => [
+          {
+            ...sampleGammaMarket,
+            description: "Resolves YES if the Fed cuts rates by June 30.",
+          },
+        ],
+      })) as unknown as typeof fetch
+    );
+
+    const m = await getMarketBySlug("x");
+    expect(m!.description).toBe(
+      "Resolves YES if the Fed cuts rates by June 30."
+    );
+  });
+
   it("returns null when slug not found", async () => {
     vi.stubGlobal(
       "fetch",
@@ -146,6 +182,58 @@ describe("getEventBySlug", () => {
     );
 
     expect(await getEventBySlug("x")).toBeNull();
+  });
+
+  it("filters out 0% candidates from the field", async () => {
+    const eventWithZeros = {
+      ...sampleGammaEvent,
+      markets: [
+        ...sampleGammaEvent.markets,
+        {
+          id: "m3",
+          slug: "out-of-it",
+          question: "Will some random person win?",
+          outcomes: '["Yes","No"]',
+          outcomePrices: '["0.001","0.999"]',
+          active: true,
+          closed: false,
+        },
+      ],
+    };
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () => [eventWithZeros],
+      })) as unknown as typeof fetch
+    );
+
+    const ev = await getEventBySlug("x");
+    expect(ev!.subMarkets.map((s) => s.slug)).toEqual([
+      "will-vance-win-2028",
+      "will-newsom-win-2028",
+    ]);
+    expect(ev!.subMarkets.find((s) => s.slug === "out-of-it")).toBeUndefined();
+  });
+
+  it("includes event description when present", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () => [
+          {
+            ...sampleGammaEvent,
+            description: "The 2028 US Presidential Election.",
+          },
+        ],
+      })) as unknown as typeof fetch
+    );
+
+    const ev = await getEventBySlug("x");
+    expect(ev!.description).toBe("The 2028 US Presidential Election.");
   });
 });
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CoinFlip } from "./CoinFlip";
+import { MarketDescription } from "./MarketDescription";
 import type { ParentEvent, FlipOutcome } from "@/lib/types";
 import { track } from "@/lib/posthog";
 import { addFlipToHistory } from "@/lib/storage";
@@ -86,6 +87,8 @@ export function CandidateList({ event }: { event: ParentEvent }) {
           />
         </div>
       ) : null}
+
+      <MarketDescription text={event.description} />
     </div>
   );
 }

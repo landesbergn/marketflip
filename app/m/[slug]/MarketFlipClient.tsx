@@ -6,6 +6,7 @@ import { CoinFlip } from "@/components/CoinFlip";
 import { SimulationPanel } from "@/components/SimulationPanel";
 import { ShareButton } from "@/components/ShareButton";
 import { PageViewTracker } from "@/components/PageViewTracker";
+import { MarketDescription } from "@/components/MarketDescription";
 import type { FlippableMarket, FlipOutcome, SimResult } from "@/lib/types";
 import { track } from "@/lib/posthog";
 import { addFlipToHistory } from "@/lib/storage";
@@ -98,6 +99,8 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
           />
         </div>
       ) : null}
+
+      <MarketDescription text={market.description} />
     </>
   );
 }

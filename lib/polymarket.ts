@@ -4,6 +4,7 @@ import {
   GAMMA_BASE,
   POLYMARKET_BASE,
   parseJsonArray,
+  isDecidedBinary,
   type GammaMarket,
   type GammaEvent,
 } from "./polymarket-internal";
@@ -21,11 +22,14 @@ function normalizeMarket(m: GammaMarket): FlippableMarket | null {
   const prices = parseJsonArray<string>(m.outcomePrices).map((s) => Number(s));
   if (labels.length < 2 || prices.length < 2) return null;
   if (m.closed === true) return null;
+  // Drop already-decided markets (one side at 0/100 — not fun to flip on).
+  if (isDecidedBinary(prices[0])) return null;
 
   return {
     id: m.id,
     slug: m.slug,
     question: m.question,
+    description: m.description,
     outcomes: labels.map((label, i) => ({
       label,
       probability: prices[i] ?? 0,
@@ -57,16 +61,20 @@ function normalizeEvent(e: GammaEvent): ParentEvent | null {
     .map((m) => {
       const prices = parseJsonArray<string>(m.outcomePrices).map(Number);
       const yesProbability = prices[0] ?? 0;
-      return m.closed === true
-        ? null
-        : { slug: m.slug, question: m.question, yesProbability };
+      if (m.closed === true) return null;
+      // Drop candidates rounding to 0% — they're noise that breaks the UI.
+      if (isDecidedBinary(yesProbability) && yesProbability < 0.5) return null;
+      return { slug: m.slug, question: m.question, yesProbability };
     })
     .filter((x): x is NonNullable<typeof x> => x !== null)
     .sort((a, b) => b.yesProbability - a.yesProbability);
 
+  if (subMarkets.length === 0) return null;
+
   return {
     slug: e.slug,
     question: e.title,
+    description: e.description,
     endDate: e.endDate ?? "",
     url: `${POLYMARKET_BASE}/event/${e.slug}`,
     subMarkets,
@@ -89,8 +97,10 @@ export async function getTrendingMarkets(
   limit = 12,
   init?: RequestInit
 ): Promise<FlippableMarket[]> {
+  // Over-fetch so we still hit `limit` after filtering decided markets.
+  const fetchLimit = limit * 3;
   const url =
-    `/markets?active=true&closed=false&order=volume24hr&ascending=false&limit=${limit}`;
+    `/markets?active=true&closed=false&order=volume24hr&ascending=false&limit=${fetchLimit}`;
   const list = await gammaFetch<GammaMarket[]>(url, init);
   return list
     .map(normalizeMarket)
@@ -106,7 +116,13 @@ function normalizeEventAsSearchHit(
   e: GammaEvent & { volume24hr?: number }
 ): FlippableMarket | null {
   if (e.closed === true || e.active === false) return null;
-  const live = (e.markets ?? []).filter((m) => m.closed !== true);
+  // Only "live" sub-markets — open and not already decided.
+  const live = (e.markets ?? []).filter((m) => {
+    if (m.closed === true) return false;
+    const yes = parseJsonArray<string>(m.outcomePrices).map(Number)[0] ?? 0;
+    if (isDecidedBinary(yes) && yes < 0.5) return false;
+    return true;
+  });
   if (live.length === 0) return null;
 
   // Use the highest-priced market's odds for the search-result pill display.
@@ -119,11 +135,13 @@ function normalizeEventAsSearchHit(
   const labels = parseJsonArray<string>(top.outcomes);
   const prices = parseJsonArray<string>(top.outcomePrices).map(Number);
   if (labels.length < 2 || prices.length < 2) return null;
+  if (isDecidedBinary(prices[0])) return null;
 
   return {
     id: e.id,
     slug: e.slug,
     question: e.title,
+    description: e.description,
     outcomes: labels.map((label, i) => ({
       label,
       probability: prices[i] ?? 0,

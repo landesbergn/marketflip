@@ -11,6 +11,8 @@ export type FlippableMarket = {
   id: string;
   slug: string;
   question: string;
+  /** Polymarket's resolution criteria / context. May contain newlines. */
+  description?: string;
   outcomes: Outcome[]; // length 2 in v1; >2 reserved for v2 wheel
   endDate: string;
   volume24h: number;
@@ -27,6 +29,7 @@ export type ParentEventSummary = {
 export type ParentEvent = {
   slug: string;
   question: string;
+  description?: string;
   endDate: string;
   url: string;
   subMarkets: SubMarketSummary[];

@@ -40,6 +40,7 @@ export default async function MarketPage({ params }: PageProps) {
         id: event.slug,
         slug: event.slug,
         question: event.question,
+        description: event.description,
         outcomes: [
           { label: "Yes", probability: sub.yesProbability },
           { label: "No", probability: 1 - sub.yesProbability },
