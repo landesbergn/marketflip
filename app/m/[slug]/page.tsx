@@ -4,7 +4,7 @@ import { CandidateList } from "@/components/CandidateList";
 import { Nameplate } from "@/components/Nameplate";
 import { MarketFlipClient } from "./MarketFlipClient";
 import type { FlippableMarket } from "@/lib/types";
-import { fmtVol, fmtResolveDate } from "@/lib/fmt";
+import { fmtVol, fmtResolveDate, reframeQuestion } from "@/lib/fmt";
 
 export const dynamic = "force-dynamic";
 
@@ -94,6 +94,11 @@ function MarketHeader({ market }: { market: FlippableMarket }) {
     resolves ? `resolves ${resolves}` : null,
     vol ? `vol ${vol}` : null,
   ].filter(Boolean);
+  const displayQuestion = reframeQuestion(
+    market.question,
+    market.outcomes[0]?.label,
+    market.outcomes[1]?.label
+  );
 
   return (
     <section className="pt-11 pb-6">
@@ -102,7 +107,7 @@ function MarketHeader({ market }: { market: FlippableMarket }) {
         className="display mt-3.5"
         style={{ fontSize: 48, lineHeight: 1.05, maxWidth: 760 }}
       >
-        {market.question}
+        {displayQuestion}
       </h1>
     </section>
   );

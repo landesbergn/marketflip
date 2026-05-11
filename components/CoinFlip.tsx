@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import { flip } from "@/lib/flip";
-import { displayLabel, isLiteralYesNo, questionToStatement } from "@/lib/fmt";
+import {
+  displayLabel,
+  isLiteralYesNo,
+  matchupStatement,
+  questionToStatement,
+} from "@/lib/fmt";
 import type { FlipOutcome } from "@/lib/types";
 
 export type CoinFlipProps = {
@@ -150,10 +155,16 @@ function Result({
   const landedOdds = result === "YES" ? yesPct : noPct;
   const literal = isLiteralYesNo(outcomeYesLabel, outcomeNoLabel);
   const landedLabel = displayLabel(result, outcomeYesLabel, outcomeNoLabel);
-  // For matchup-style markets (team/candidate labels), the label IS the
-  // outcome; no need for a strikethrough proposition. For literal Yes/No
-  // markets, restate the question and strike it through on NO.
-  const statement = literal ? questionToStatement(question) : "";
+  const winnerLabel =
+    result === "YES" ? outcomeYesLabel : outcomeNoLabel;
+  const loserLabel =
+    result === "YES" ? outcomeNoLabel : outcomeYesLabel;
+  // For literal Yes/No markets, restate the question and strike it
+  // through on NO. For matchup-style markets (team/candidate labels)
+  // the label is the outcome — pair it with a "X beat Y." statement.
+  const statement = literal
+    ? questionToStatement(question)
+    : matchupStatement(winnerLabel, loserLabel);
 
   return (
     <div>
@@ -170,11 +181,9 @@ function Result({
       >
         {landedLabel.toUpperCase()}.
       </p>
-      {literal && statement && (
+      {statement && (
         <p className="mt-3 text-[22px] leading-snug max-w-md">
-          {result === "YES" ? (
-            <span className="italic">{statement}</span>
-          ) : (
+          {literal && result === "NO" ? (
             <span
               className="italic text-[var(--ink-soft)]"
               style={{
@@ -184,6 +193,8 @@ function Result({
             >
               {statement}
             </span>
+          ) : (
+            <span className="italic">{statement}</span>
           )}
         </p>
       )}

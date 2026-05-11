@@ -12,7 +12,7 @@ import type { FlippableMarket, FlipOutcome, SimResult } from "@/lib/types";
 import { track } from "@/lib/posthog";
 import { addFlipToHistory } from "@/lib/storage";
 import { formatSingleFlipShare, formatSimulationShare } from "@/lib/share";
-import { isLiteralYesNo } from "@/lib/fmt";
+import { isLiteralYesNo, reframeQuestion } from "@/lib/fmt";
 
 export function MarketFlipClient({ market }: { market: FlippableMarket }) {
   const yes = market.outcomes[0];
@@ -28,6 +28,11 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
     typeof window !== "undefined" ? window.location.href : market.url;
   const literal = isLiteralYesNo(yes?.label, no?.label);
   const yesToken = literal ? "YES" : yes?.label ?? "YES";
+  const displayQuestion = reframeQuestion(
+    market.question,
+    yes?.label,
+    no?.label
+  );
 
   return (
     <>
@@ -74,7 +79,7 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
       {/* The flip itself */}
       <CoinFlip
         slug={market.slug}
-        question={market.question}
+        question={displayQuestion}
         yesProbability={yesProbability}
         outcomeYesLabel={yes?.label ?? "Yes"}
         outcomeNoLabel={no?.label ?? "No"}
@@ -105,7 +110,7 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
         <div className="flex flex-wrap items-center gap-5 -mt-2">
           <SimulationPanel
             slug={market.slug}
-            question={market.question}
+            question={displayQuestion}
             yesProbability={yesProbability}
             yesLabel={yes?.label}
             noLabel={no?.label}
@@ -125,7 +130,7 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
             slug={market.slug}
             mode="single"
             text={formatSingleFlipShare({
-              question: market.question,
+              question: displayQuestion,
               yesProbability,
               flipped: lastFlip,
               yesLabel: yes?.label,
@@ -151,7 +156,7 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
             slug={market.slug}
             mode="sim"
             text={formatSimulationShare({
-              question: market.question,
+              question: displayQuestion,
               yesProbability,
               n: lastSim.n,
               yesCount: lastSim.yesCount,

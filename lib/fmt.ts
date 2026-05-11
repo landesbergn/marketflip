@@ -67,3 +67,33 @@ export function displayLabel(
   if (isLiteralYesNo(yesLabel, noLabel)) return outcome;
   return outcome === "YES" ? yesLabel ?? "Yes" : noLabel ?? "No";
 }
+
+/**
+ * Reframe a matchup-style question ("Pistons vs. Cavaliers") as a
+ * proper Yes/No proposition ("Will Pistons beat Cavaliers?") whenever
+ * the outcome labels carry meaning. Falls back to the original
+ * question otherwise.
+ */
+export function reframeQuestion(
+  question: string,
+  yesLabel?: string,
+  noLabel?: string
+): string {
+  if (!question) return question;
+  if (isLiteralYesNo(yesLabel, noLabel)) return question;
+  if (!yesLabel || !noLabel) return question;
+  if (!/\bvs\.?\b/i.test(question)) return question;
+  return `Will ${yesLabel} beat ${noLabel}?`;
+}
+
+/**
+ * Declarative statement for a matchup outcome.
+ * "Pistons beat Cavaliers." — plural verb is the natural form for
+ * most sports-team labels and reads acceptably for singular ones.
+ */
+export function matchupStatement(
+  winnerLabel: string,
+  loserLabel: string
+): string {
+  return `${winnerLabel} beat ${loserLabel}.`;
+}
