@@ -68,11 +68,8 @@ export function CoinFlip(props: CoinFlipProps) {
   };
 
   return (
-    <section
-      className="py-10 grid gap-14 items-center"
-      style={{ gridTemplateColumns: "220px 1fr" }}
-    >
-      <div className="grid place-items-end justify-self-center">
+    <section className="flex flex-col items-start gap-7">
+      <div className="self-center">
         <div className="coin-stage">
           <div className="coin-shadow" data-state={phase} />
           <div
@@ -101,17 +98,18 @@ export function CoinFlip(props: CoinFlipProps) {
       </div>
 
       <div
+        className="w-full"
         aria-label={`Implied odds: ${outcomeYesLabel} ${yesPct}%, ${outcomeNoLabel} ${noPct}%`}
       >
         {phase === "idle" && (
           <>
-            <h2 className="text-3xl font-semibold tracking-tight">
+            <h2 className="text-2xl font-semibold tracking-tight">
               Draw one future.
             </h2>
-            <p className="mt-2 text-sm leading-relaxed text-[var(--ink-soft)] max-w-sm">
+            <p className="mt-1.5 text-sm leading-relaxed text-[var(--ink-soft)] max-w-sm">
               One flip, weighted to the odds.
             </p>
-            <button onClick={handleFlip} className="btn-primary mt-6">
+            <button onClick={handleFlip} className="btn-primary mt-5">
               Flip the coin
             </button>
           </>
@@ -159,9 +157,6 @@ function Result({
     result === "YES" ? outcomeYesLabel : outcomeNoLabel;
   const loserLabel =
     result === "YES" ? outcomeNoLabel : outcomeYesLabel;
-  // For literal Yes/No markets, restate the question and strike it
-  // through on NO. For matchup-style markets (team/candidate labels)
-  // the label is the outcome — pair it with a "X beat Y." statement.
   const statement = literal
     ? questionToStatement(question)
     : matchupStatement(winnerLabel, loserLabel);
@@ -173,7 +168,7 @@ function Result({
         role="status"
         className="display mt-1"
         style={{
-          fontSize: 84,
+          fontSize: 64,
           color: result === "YES" ? "var(--accent)" : "var(--ink)",
           lineHeight: 0.95,
           fontStyle: "italic",
@@ -182,7 +177,7 @@ function Result({
         {landedLabel.toUpperCase()}.
       </p>
       {statement && (
-        <p className="mt-3 text-[22px] leading-snug max-w-md">
+        <p className="mt-2 text-[20px] leading-snug max-w-md">
           {literal && result === "NO" ? (
             <span
               className="italic text-[var(--ink-soft)]"
@@ -198,14 +193,13 @@ function Result({
           )}
         </p>
       )}
-      <p className="figure mt-3 text-[11px] tracking-[0.15em] uppercase text-[var(--ink-mono)]">
+      <p className="figure mt-2 text-[11px] tracking-[0.15em] uppercase text-[var(--ink-mono)]">
         Market priced {landedLabel.toUpperCase()} at {landedOdds}%.
       </p>
-      <div className="mt-5 flex flex-wrap items-center gap-4">
+      <div className="mt-4 flex flex-wrap items-center gap-4">
         <button onClick={onAgain} className="btn-outline">
           Flip again
         </button>
-        <span data-slot="result-actions" />
       </div>
     </div>
   );

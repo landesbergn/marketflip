@@ -43,103 +43,107 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
         }}
       />
 
-      {/* The reading: dot grid */}
-      <section className="pt-9 pb-10">
-        <p className="eyebrow mb-4">The reading</p>
-        <p
-          className="text-[26px] italic leading-snug m-0 max-w-[720px]"
-          style={{ color: "var(--ink)" }}
-        >
-          The market sees{" "}
-          <span className="not-italic" style={{ color: "var(--accent)" }}>
-            {yesToken}
-          </span>{" "}
-          in{" "}
-          <span className="not-italic" style={{ color: "var(--accent)" }}>
-            {yesPct}
-          </span>{" "}
-          of{" "}
-          <span className="not-italic" style={{ color: "var(--accent)" }}>
-            100
-          </span>{" "}
-          futures.
-        </p>
+      {/* Reading + Flip side-by-side on lg+, stacked below */}
+      <section className="pt-8 pb-6 grid gap-12 lg:grid-cols-2 items-start">
+        {/* Left: The Reading */}
+        <div>
+          <p className="eyebrow mb-3">The reading</p>
+          <p
+            className="text-[22px] italic leading-snug m-0"
+            style={{ color: "var(--ink)" }}
+          >
+            The market sees{" "}
+            <span className="not-italic" style={{ color: "var(--accent)" }}>
+              {yesToken}
+            </span>{" "}
+            in{" "}
+            <span className="not-italic" style={{ color: "var(--accent)" }}>
+              {yesPct}
+            </span>{" "}
+            of{" "}
+            <span className="not-italic" style={{ color: "var(--accent)" }}>
+              100
+            </span>{" "}
+            futures.
+          </p>
 
-        <div className="mt-7">
-          <DotGrid yesProb={yesProbability} cols={20} size={18} gap={5} />
-          <div className="flex gap-6 mt-4">
-            <LegendDot solid label={`${yesPct} ${yes?.label ?? "YES"}`} />
-            <LegendDot solid={false} label={`${noPct} ${no?.label ?? "NO"}`} />
+          <div className="mt-5">
+            <DotGrid yesProb={yesProbability} cols={20} size={16} gap={4} />
+            <div className="flex gap-5 mt-3">
+              <LegendDot solid label={`${yesPct} ${yes?.label ?? "YES"}`} />
+              <LegendDot solid={false} label={`${noPct} ${no?.label ?? "NO"}`} />
+            </div>
           </div>
         </div>
-      </section>
 
-      <hr className="border-0 border-t border-[var(--rule)] m-0" />
-
-      {/* The flip itself */}
-      <CoinFlip
-        slug={market.slug}
-        question={displayQuestion}
-        yesProbability={yesProbability}
-        outcomeYesLabel={yes?.label ?? "Yes"}
-        outcomeNoLabel={no?.label ?? "No"}
-        onFlipComplete={(o) => {
-          setLastFlip(o);
-          setLastSim(null);
-          track({
-            name: "flip_executed",
-            props: {
-              slug: market.slug,
-              outcome: o,
-              implied_probability: yesProbability,
-            },
-          });
-          addFlipToHistory({
-            slug: market.slug,
-            question: market.question,
-            outcomeLabel: o === "YES" ? yes?.label ?? "Yes" : no?.label ?? "No",
-            flippedTo: o,
-            impliedProbability: yesProbability,
-            timestamp: Date.now(),
-          });
-          setHistoryKey((k) => k + 1);
-        }}
-      />
-
-      {lastFlip && (
-        <div className="flex flex-wrap items-center gap-5 -mt-2">
-          <SimulationPanel
+        {/* Right: Flip */}
+        <div>
+          <CoinFlip
             slug={market.slug}
             question={displayQuestion}
             yesProbability={yesProbability}
-            yesLabel={yes?.label}
-            noLabel={no?.label}
-            onSimulationComplete={(r) => {
-              setLastSim(r);
+            outcomeYesLabel={yes?.label ?? "Yes"}
+            outcomeNoLabel={no?.label ?? "No"}
+            onFlipComplete={(o) => {
+              setLastFlip(o);
+              setLastSim(null);
               track({
-                name: "simulation_run",
+                name: "flip_executed",
                 props: {
                   slug: market.slug,
-                  n: r.n,
-                  observed_yes_count: r.yesCount,
+                  outcome: o,
+                  implied_probability: yesProbability,
                 },
               });
+              addFlipToHistory({
+                slug: market.slug,
+                question: market.question,
+                outcomeLabel:
+                  o === "YES" ? yes?.label ?? "Yes" : no?.label ?? "No",
+                flippedTo: o,
+                impliedProbability: yesProbability,
+                timestamp: Date.now(),
+              });
+              setHistoryKey((k) => k + 1);
             }}
           />
-          <ShareButton
-            slug={market.slug}
-            mode="single"
-            text={formatSingleFlipShare({
-              question: displayQuestion,
-              yesProbability,
-              flipped: lastFlip,
-              yesLabel: yes?.label,
-              noLabel: no?.label,
-              url,
-            })}
-          />
+
+          {lastFlip && (
+            <div className="mt-4 flex flex-wrap items-center gap-5">
+              <SimulationPanel
+                slug={market.slug}
+                question={displayQuestion}
+                yesProbability={yesProbability}
+                yesLabel={yes?.label}
+                noLabel={no?.label}
+                onSimulationComplete={(r) => {
+                  setLastSim(r);
+                  track({
+                    name: "simulation_run",
+                    props: {
+                      slug: market.slug,
+                      n: r.n,
+                      observed_yes_count: r.yesCount,
+                    },
+                  });
+                }}
+              />
+              <ShareButton
+                slug={market.slug}
+                mode="single"
+                text={formatSingleFlipShare({
+                  question: displayQuestion,
+                  yesProbability,
+                  flipped: lastFlip,
+                  yesLabel: yes?.label,
+                  noLabel: no?.label,
+                  url,
+                })}
+              />
+            </div>
+          )}
         </div>
-      )}
+      </section>
 
       {/* Personal flip distribution */}
       <History

@@ -8,7 +8,7 @@ type Props = {
 
 export function Nameplate({ showBack = false }: Props) {
   return (
-    <header className="pt-9 pb-6">
+    <header className="pt-6 pb-4">
       <div
         className="flex justify-between items-center"
         style={{ minHeight: 32 }}

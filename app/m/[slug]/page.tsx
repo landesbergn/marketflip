@@ -19,7 +19,7 @@ export default async function MarketPage({ params }: PageProps) {
 
   if (market) {
     return (
-      <main className="mx-auto max-w-[880px] px-14">
+      <main className="mx-auto max-w-[1024px] px-14">
         <Nameplate showBack />
         <hr className="border-0 border-t border-[var(--rule)] m-0" />
         <MarketHeader market={market} />
@@ -51,7 +51,7 @@ export default async function MarketPage({ params }: PageProps) {
         url: event.url,
       };
       return (
-        <main className="mx-auto max-w-[880px] px-14">
+        <main className="mx-auto max-w-[1024px] px-14">
           <Nameplate showBack />
           <hr className="border-0 border-t border-[var(--rule)] m-0" />
           <MarketHeader market={synthetic} />
@@ -62,7 +62,7 @@ export default async function MarketPage({ params }: PageProps) {
     }
 
     return (
-      <main className="mx-auto max-w-[880px] px-14">
+      <main className="mx-auto max-w-[1024px] px-14">
         <Nameplate showBack />
         <hr className="border-0 border-t border-[var(--rule)] m-0" />
         <section className="pt-11 pb-6">
