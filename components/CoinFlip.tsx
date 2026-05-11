@@ -10,11 +10,16 @@ export type CoinFlipProps = {
   yesProbability: number;
   outcomeYesLabel: string;
   outcomeNoLabel: string;
+  /** Total flip animation duration. 0 means instant (used in tests). */
   flipDurationMs?: number;
   onFlipComplete?: (outcome: FlipOutcome) => void;
+  /** Render the inline result panel right under the coin. Default true. */
+  renderResult?: boolean;
 };
 
-type Phase = "idle" | "flipping" | "revealed";
+type Phase = "idle" | "flipping" | "landed";
+
+const FLIP_TURNS = 8; // even number of half-turns — front returns to camera
 
 export function CoinFlip(props: CoinFlipProps) {
   const {
@@ -22,106 +27,152 @@ export function CoinFlip(props: CoinFlipProps) {
     yesProbability,
     outcomeYesLabel,
     outcomeNoLabel,
-    flipDurationMs = 1900,
+    flipDurationMs = 1500,
     onFlipComplete,
+    renderResult = true,
   } = props;
 
   const [phase, setPhase] = useState<Phase>("idle");
   const [result, setResult] = useState<FlipOutcome | null>(null);
+
+  const yesPct = Math.round(yesProbability * 100);
+  const noPct = 100 - yesPct;
 
   const handleFlip = () => {
     if (phase === "flipping") return;
     const outcome = flip(yesProbability);
     setResult(outcome);
     if (flipDurationMs <= 0) {
-      setPhase("revealed");
+      setPhase("landed");
       onFlipComplete?.(outcome);
       return;
     }
     setPhase("flipping");
     setTimeout(() => {
-      setPhase("revealed");
+      setPhase("landed");
       onFlipComplete?.(outcome);
     }, flipDurationMs);
   };
 
-  const yesPct = Math.round(yesProbability * 100);
-  const noPct = 100 - yesPct;
-  const shownLabel =
-    result === "YES" ? outcomeYesLabel : result === "NO" ? outcomeNoLabel : "";
+  const handleAgain = () => {
+    setPhase("idle");
+    setResult(null);
+  };
+
+  const finalDeg =
+    phase === "idle" ? 0 : FLIP_TURNS * 180 + (result === "YES" ? 0 : 180);
 
   return (
-    <section className="flex flex-col items-center text-center gap-7 py-8">
-      <div className="space-y-3">
-        <p className="eyebrow text-[var(--ink-faint)]">The Wager</p>
-        <h1
-          className="headline text-3xl sm:text-4xl md:text-5xl max-w-2xl mx-auto"
-          style={{ fontVariationSettings: '"SOFT" 0, "WONK" 1, "opsz" 144' }}
-        >
-          {question}
-        </h1>
-        <hr className="rule mx-auto w-24" />
-        <div
-          className="flex justify-center gap-2 text-sm"
-          aria-label={`Implied odds: ${outcomeYesLabel} ${yesPct}%, ${outcomeNoLabel} ${noPct}%`}
-        >
-          <span className="pill-yes">{`${outcomeYesLabel} ${yesPct}%`}</span>
-          <span className="pill-no">{`${outcomeNoLabel} ${noPct}%`}</span>
+    <section
+      className="py-10 grid gap-14 items-center"
+      style={{ gridTemplateColumns: "220px 1fr" }}
+    >
+      <div className="grid place-items-end justify-self-center">
+        <div className="coin-stage">
+          <div className="coin-shadow" data-state={phase} />
+          <div className="coin-arc" data-state={phase}>
+            <div
+              className="coin-spin"
+              data-state={phase}
+              style={{ transform: `rotateX(${finalDeg}deg)` }}
+            >
+              <div className="coin-face coin-face--yes">
+                {phase === "landed" && result === "YES"
+                  ? "YES"
+                  : phase === "idle"
+                  ? "?"
+                  : ""}
+              </div>
+              <div className="coin-face coin-face--no">
+                {phase === "landed" && result === "NO" ? "NO" : ""}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <Coin phase={phase} result={result} />
+      <div aria-label={`Implied odds: ${outcomeYesLabel} ${yesPct}%, ${outcomeNoLabel} ${noPct}%`}>
+        {phase === "idle" && (
+          <>
+            <h2 className="text-3xl font-semibold tracking-tight">
+              Draw one future.
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ink-soft)] max-w-sm">
+              One flip, weighted to the odds.
+            </p>
+            <button onClick={handleFlip} className="btn-primary mt-6">
+              Flip the coin
+            </button>
+          </>
+        )}
 
-      {phase === "revealed" && result ? (
-        <div className="space-y-1">
-          <p className="eyebrow text-[var(--ink-faint)]">The Verdict</p>
-          <p
-            role="status"
-            className={`verdict ${
-              result === "YES" ? "verdict--yes" : "verdict--no"
-            }`}
-          >
-            {result === "YES" ? "\u{1F389}" : "\u{1F6A8}"} {result}
-          </p>
-          <p className="figure text-sm text-[var(--ink-soft)]">
-            ({shownLabel})
-          </p>
-        </div>
-      ) : phase === "flipping" ? (
-        <p className="eyebrow text-[var(--ink-faint)] tracking-[0.4em]">
-          ··· flipping ···
-        </p>
-      ) : null}
+        {phase === "flipping" && (
+          <p className="text-2xl italic text-[var(--ink-faint)]">drawing&hellip;</p>
+        )}
 
-      <button
-        onClick={handleFlip}
-        disabled={phase === "flipping"}
-        className="btn-flip"
-      >
-        {phase === "idle"
-          ? "Flip the Coin"
-          : phase === "flipping"
-          ? "Flipping…"
-          : "Flip Again"}
-      </button>
+        {phase === "landed" && result && renderResult && (
+          <Result
+            result={result}
+            question={question}
+            yesPct={yesPct}
+            outcomeYesLabel={outcomeYesLabel}
+            outcomeNoLabel={outcomeNoLabel}
+            onAgain={handleAgain}
+          />
+        )}
+      </div>
     </section>
   );
 }
 
-function Coin({ phase, result }: { phase: Phase; result: FlipOutcome | null }) {
+function Result({
+  result,
+  question,
+  yesPct,
+  outcomeYesLabel,
+  outcomeNoLabel,
+  onAgain,
+}: {
+  result: FlipOutcome;
+  question: string;
+  yesPct: number;
+  outcomeYesLabel: string;
+  outcomeNoLabel: string;
+  onAgain: () => void;
+}) {
+  const noPct = 100 - yesPct;
+  const landedOdds = result === "YES" ? yesPct : noPct;
+  const label = result === "YES" ? outcomeYesLabel : outcomeNoLabel;
+
   return (
-    <div className="coin-stage">
-      <div className="coin" data-phase={phase} data-result={result ?? ""}>
-        <div className="coin-face face-heads">
-          <span className="coin-mark coin-mark--top">Marketflip</span>
-          <span className="coin-glyph">✓</span>
-          <span className="coin-mark coin-mark--bottom">Yes</span>
-        </div>
-        <div className="coin-face face-tails">
-          <span className="coin-mark coin-mark--top">Marketflip</span>
-          <span className="coin-glyph">✕</span>
-          <span className="coin-mark coin-mark--bottom">No</span>
-        </div>
+    <div>
+      <p className="eyebrow">The coin landed on</p>
+      <p
+        role="status"
+        className="display mt-1"
+        style={{
+          fontSize: 84,
+          color: result === "YES" ? "var(--accent)" : "var(--ink)",
+          lineHeight: 0.95,
+        }}
+      >
+        {result}.
+      </p>
+      <p className="mt-3 text-xl leading-snug max-w-md">
+        {question}{" "}
+        <span className="text-[var(--ink-soft)]">
+          ({label})
+        </span>
+      </p>
+      <p className="figure mt-2 text-[11px] tracking-[0.15em] uppercase text-[var(--ink-mono)]">
+        Market priced {result} at {landedOdds}%.
+      </p>
+      <div className="mt-5 flex flex-wrap items-center gap-4">
+        <button onClick={onAgain} className="btn-outline">
+          Flip again
+        </button>
+        {/* Run-sim & share buttons are injected by the parent client component */}
+        <span data-slot="result-actions" />
       </div>
     </div>
   );

@@ -17,9 +17,10 @@ export function RefreshOddsButton() {
     <button
       onClick={onClick}
       disabled={refreshing}
-      className="eyebrow text-[var(--ink-soft)] hover:text-[var(--oxblood)] disabled:opacity-50 transition-colors"
+      className="eyebrow disabled:opacity-50"
+      style={{ background: "transparent", border: 0, padding: 0, cursor: "pointer" }}
     >
-      {refreshing ? "↻ Refreshing…" : "↻ Refresh odds"}
+      {refreshing ? "↻ Refreshing…" : "↻ Refresh"}
     </button>
   );
 }

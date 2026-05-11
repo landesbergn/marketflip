@@ -1,404 +1,251 @@
 @import "tailwindcss";
 
 /* ======================================================================
-   MarketFlip — "Racing Form Almanac" design system
-   Late-19th-century financial broadside meets modern editorial.
+   MarketFlip — Minimal ink-on-paper design system
    ====================================================================== */
 
 :root {
   /* Paper & ink */
-  --paper: #f3e7cf;
-  --paper-deep: #ecdfc1;
-  --paper-bright: #fbf5e3;
-  --ink: #1a1612;
-  --ink-soft: #5b4f43;
-  --ink-faint: #8a7d6e;
-  --rule: #c8b78c;
-  --rule-soft: #d8c9a3;
+  --paper: #fafaf7;
+  --paper-soft: #f3f1e9;
+  --ink: #0a0a0a;
+  --ink-soft: #5a5a5a;
+  --ink-faint: #6b6b6b;
+  --ink-mono: #7a7a7a;
+  --rule: #e4e4de;
+  --rule-soft: #ecece4;
 
-  /* Accents */
-  --oxblood: #8b1f1f;
-  --oxblood-deep: #6a1414;
-  --green: #1e4a2b;
-  --green-deep: #143420;
+  /* Accent (navy by default) */
+  --accent: #1a3a6b;
 
-  /* Coin */
-  --gold-light: #efd283;
-  --gold: #c79a44;
-  --gold-deep: #7a5520;
-  --gold-shadow: #4a3614;
+  /* Coin gold */
+  --gold-bright: #fae28a;
+  --gold: #d4a017;
+  --gold-deep: #7a5605;
 }
 
 @theme inline {
   --color-paper: var(--paper);
-  --color-paper-deep: var(--paper-deep);
-  --color-paper-bright: var(--paper-bright);
+  --color-paper-soft: var(--paper-soft);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-ink-faint: var(--ink-faint);
+  --color-ink-mono: var(--ink-mono);
   --color-rule: var(--rule);
   --color-rule-soft: var(--rule-soft);
-  --color-oxblood: var(--oxblood);
-  --color-oxblood-deep: var(--oxblood-deep);
-  --color-green: var(--green);
-  --color-green-deep: var(--green-deep);
+  --color-accent: var(--accent);
   --color-gold: var(--gold);
-  --color-gold-light: var(--gold-light);
-  --color-gold-deep: var(--gold-deep);
 
-  --font-display: var(--font-fraunces), "Fraunces", Georgia, serif;
-  --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
 }
 
 html, body {
   background: var(--paper);
   color: var(--ink);
+  font-family: var(--font-sans);
 }
 
 body {
-  font-family: var(--font-display);
-  font-feature-settings: "ss01", "ss02", "onum", "dlig";
-  font-optical-sizing: auto;
-  font-variation-settings: "SOFT" 30, "WONK" 0;
-  /* Subtle paper grain via SVG noise */
-  background-image:
-    radial-gradient(at 12% 8%, rgba(200, 167, 90, 0.08) 0%, transparent 45%),
-    radial-gradient(at 88% 90%, rgba(139, 31, 31, 0.05) 0%, transparent 50%),
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.10  0 0 0 0 0.085  0 0 0 0 0.07  0 0 0 0.13 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-  background-size: auto, auto, 220px 220px;
+  letter-spacing: -0.012em;
 }
 
 /* ----- Typography utilities ----- */
 
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
+  font-size: 11px;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--ink-soft);
-}
-
-.headline {
-  font-family: var(--font-display);
-  font-variation-settings: "SOFT" 0, "WONK" 1, "opsz" 144;
-  font-weight: 600;
-  line-height: 0.95;
-  letter-spacing: -0.02em;
-  color: var(--ink);
+  color: var(--ink-faint);
 }
 
 .figure {
   font-family: var(--font-mono);
   font-feature-settings: "tnum", "lnum";
-  letter-spacing: -0.01em;
 }
 
-/* ----- Decorative dividers ----- */
-
-.rule {
-  height: 1px;
-  background: var(--rule);
-  border: 0;
-}
-
-.rule-double {
-  height: 5px;
-  border-top: 1px solid var(--ink);
-  border-bottom: 1px solid var(--ink);
-  border-left: 0;
-  border-right: 0;
-}
-
-.fleuron::before { content: "❦"; }
-
-.bullet-divider {
-  display: inline-block;
-  margin: 0 0.5em;
-  color: var(--ink-faint);
-}
-.bullet-divider::before { content: "·"; }
-
-/* ----- Inputs ----- */
-
-input.paper-input,
-input[type="text"].paper-input {
-  background: var(--paper-bright);
-  border: 1px solid var(--rule);
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-variation-settings: "SOFT" 0;
-  transition: border-color 120ms ease, box-shadow 120ms ease;
-}
-input.paper-input::placeholder {
-  color: var(--ink-faint);
-  font-style: italic;
-}
-input.paper-input:focus {
-  outline: none;
-  border-color: var(--ink);
-  box-shadow: 0 0 0 3px rgba(26, 22, 18, 0.08);
+/* "Display" — large headlines using sans w/ tight tracking */
+.display {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1;
 }
 
 /* ----- Buttons ----- */
 
-.btn-ink {
+.btn-primary {
   background: var(--ink);
-  color: var(--paper-bright);
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.16em;
+  color: var(--paper);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  font-weight: 500;
-  padding: 0.625rem 1.125rem;
-  border-radius: 2px;
-  transition: background 120ms ease, transform 120ms ease;
+  padding: 14px 26px;
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+  transition: opacity 120ms ease;
 }
-.btn-ink:hover { background: var(--oxblood); }
-.btn-ink:active { transform: translateY(1px); }
-.btn-ink:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary:hover { opacity: 0.86; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.btn-ghost {
+.btn-outline {
   background: transparent;
   color: var(--ink);
   font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.16em;
+  font-size: 11px;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
+  padding: 10px 18px;
   border: 1px solid var(--ink);
-  border-radius: 2px;
-  transition: background 120ms ease;
+  border-radius: 0;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
 }
-.btn-ghost:hover { background: var(--ink); color: var(--paper-bright); }
+.btn-outline:hover { background: var(--ink); color: var(--paper); }
 
-/* The hero "FLIP" button — extra weighty */
-.btn-flip {
-  background: var(--ink);
-  color: var(--paper-bright);
-  font-family: var(--font-display);
-  font-variation-settings: "SOFT" 0, "WONK" 1;
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  padding: 0.875rem 2.25rem;
-  border-radius: 2px;
-  border: 2px solid var(--ink);
-  transition: all 140ms ease;
-  box-shadow: 4px 4px 0 var(--ink);
-  position: relative;
-}
-.btn-flip:hover {
-  background: var(--oxblood);
-  border-color: var(--oxblood);
-  box-shadow: 4px 4px 0 var(--oxblood-deep);
-}
-.btn-flip:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
-.btn-flip:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: 4px 4px 0 var(--ink-faint); }
-
-/* ----- Pills (odds badges) ----- */
-
-.pill-yes,
-.pill-no {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.4em;
+.btn-link {
+  background: transparent;
+  border: 0;
+  padding: 0;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
-  font-weight: 500;
-  padding: 0.2rem 0.55rem;
-  border-radius: 999px;
+  font-size: 11px;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
 }
-.pill-yes {
-  background: rgba(30, 74, 43, 0.12);
-  color: var(--green-deep);
-  border: 1px solid rgba(30, 74, 43, 0.25);
-}
-.pill-no {
-  background: rgba(139, 31, 31, 0.10);
-  color: var(--oxblood-deep);
-  border: 1px solid rgba(139, 31, 31, 0.25);
-}
+.btn-link:hover { opacity: 0.75; }
 
-/* ----- Cards / Tickets ----- */
+/* ----- Row hover ----- */
 
-.ticket {
-  background: var(--paper-bright);
-  border: 1px solid var(--rule);
-  position: relative;
-  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
-}
-.ticket:hover {
-  border-color: var(--ink);
-  box-shadow: 3px 3px 0 var(--ink);
-  transform: translate(-1px, -1px);
-}
+.row-hover { transition: background 120ms ease; }
+.row-hover:hover { background: var(--paper-soft); }
 
 /* ====================================================================
-   The Coin — true 3D, gold, embossed
+   Big flip coin — 2D disc with toss arc + landing squish
    ==================================================================== */
 
 .coin-stage {
-  perspective: 1400px;
-  width: 11.5rem;
-  height: 11.5rem;
-  display: grid;
-  place-items: center;
+  position: relative;
+  width: 190px;
+  height: 214px;
+  perspective: 900px;
 }
 
-.coin {
+.coin-shadow {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 148px;
+  height: 23px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0) 70%);
+  filter: blur(2px);
+  pointer-events: none;
+  transition: transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.coin-shadow[data-state="flipping"] {
+  transform: translateX(-50%) scaleX(0.55) scaleY(0.45);
+  transition: transform 1500ms cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.coin-arc {
+  width: 190px;
+  height: 190px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: center bottom;
+}
+.coin-arc[data-state="flipping"] {
+  animation: coin-toss 1500ms cubic-bezier(0.34, 1.2, 0.5, 1) forwards;
+}
+
+.coin-spin {
   width: 100%;
   height: 100%;
   position: relative;
   transform-style: preserve-3d;
-  filter: drop-shadow(0 14px 14px rgba(74, 54, 20, 0.32));
-  will-change: transform;
+  transform: rotateX(0deg);
 }
-
-.coin[data-phase="idle"] {
-  animation: coin-bob 4.2s ease-in-out infinite;
+.coin-spin[data-state="flipping"] {
+  transition: transform 1500ms cubic-bezier(0.2, 0.55, 0.3, 1);
+  filter: blur(0.6px);
 }
-
-.coin[data-phase="flipping"][data-result="YES"] {
-  animation: coin-flip-yes 1.9s cubic-bezier(0.18, 0.85, 0.22, 1) forwards;
-}
-.coin[data-phase="flipping"][data-result="NO"] {
-  animation: coin-flip-no 1.9s cubic-bezier(0.18, 0.85, 0.22, 1) forwards;
-}
-
-.coin[data-phase="revealed"][data-result="YES"] {
-  transform: rotateY(2520deg);
-}
-.coin[data-phase="revealed"][data-result="NO"] {
-  transform: rotateY(2700deg);
-}
-
-@keyframes coin-bob {
-  0%, 100% { transform: rotateY(-10deg) translateY(0); }
-  50%      { transform: rotateY(10deg)  translateY(-4px); }
-}
-
-@keyframes coin-flip-yes {
-  0%   { transform: rotateY(0deg)    translateY(0); }
-  20%  { transform: rotateY(540deg)  translateY(-46px); }
-  55%  { transform: rotateY(1620deg) translateY(-72px); }
-  85%  { transform: rotateY(2300deg) translateY(-22px); }
-  100% { transform: rotateY(2520deg) translateY(0); }
-}
-
-@keyframes coin-flip-no {
-  0%   { transform: rotateY(0deg)    translateY(0); }
-  20%  { transform: rotateY(540deg)  translateY(-46px); }
-  55%  { transform: rotateY(1620deg) translateY(-72px); }
-  85%  { transform: rotateY(2480deg) translateY(-22px); }
-  100% { transform: rotateY(2700deg) translateY(0); }
+.coin-spin[data-state="landed"] {
+  transition: transform 1500ms cubic-bezier(0.2, 0.55, 0.3, 1);
 }
 
 .coin-face {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  backface-visibility: hidden;
-  background:
-    radial-gradient(circle at 28% 24%, var(--gold-light) 0%, var(--gold) 38%, var(--gold-deep) 100%);
-  box-shadow:
-    inset 0 0 0 4px rgba(74, 54, 20, 0.55),
-    inset 0 0 0 6px rgba(239, 210, 131, 0.7),
-    inset 0 0 0 8px rgba(74, 54, 20, 0.35),
-    inset 0 0 32px rgba(74, 54, 20, 0.45),
-    inset 0 -10px 26px rgba(74, 54, 20, 0.35),
-    inset 0 10px 22px rgba(255, 235, 175, 0.55);
+  background: #fff;
   display: grid;
   place-items: center;
-  color: rgba(74, 54, 20, 0.9);
-  text-shadow: 0 1px 0 rgba(255, 235, 175, 0.6), 0 -1px 1px rgba(74, 54, 20, 0.35);
-  font-family: var(--font-display);
-  font-variation-settings: "SOFT" 0, "WONK" 1, "opsz" 144;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 61px;
+  letter-spacing: -0.025em;
+  backface-visibility: hidden;
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.04),
+    0 18px 30px -20px rgba(0, 0, 0, 0.25),
+    inset 0 0 0 0.5px rgba(0, 0, 0, 0.04);
+}
+.coin-face--yes {
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+}
+.coin-face--no {
+  border: 1.5px solid var(--ink);
+  color: var(--ink);
+  transform: rotateX(180deg);
 }
 
-.coin-face::before {
-  content: "";
-  position: absolute;
-  inset: 14%;
-  border-radius: 50%;
-  border: 1px dashed rgba(74, 54, 20, 0.35);
+@keyframes coin-toss {
+  0%   { transform: translateY(0)     scaleY(1); }
+  15%  { transform: translateY(-104px) scaleY(1.02); }
+  50%  { transform: translateY(-161px) scaleY(1); }
+  85%  { transform: translateY(-19px)  scaleY(1); }
+  92%  { transform: translateY(0)     scaleY(0.82); }
+  100% { transform: translateY(0)     scaleY(1); }
 }
-
-.coin-face.face-tails {
-  transform: rotateY(180deg);
-}
-
-.coin-glyph {
-  font-size: 4.6rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1;
-}
-
-.coin-mark {
-  position: absolute;
-  font-family: var(--font-mono);
-  font-size: 0.55rem;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: rgba(74, 54, 20, 0.75);
-}
-.coin-mark--top { top: 8%; }
-.coin-mark--bottom { bottom: 8%; }
 
 /* ====================================================================
-   Reveal / status text
+   Header coin — perpetual rotateY, gold textured, no letters
    ==================================================================== */
 
-.verdict {
-  font-family: var(--font-display);
-  font-variation-settings: "SOFT" 0, "WONK" 1, "opsz" 144;
-  font-weight: 700;
-  font-size: 2.25rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  line-height: 1;
+@keyframes mf-header-coin {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
 }
-.verdict--yes { color: var(--green-deep); }
-.verdict--no  { color: var(--oxblood); }
 
 /* ====================================================================
-   Page-load reveal animation (staggered)
+   Page-load reveal
    ==================================================================== */
 
 @keyframes rise {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.rise        { animation: rise 0.55s cubic-bezier(0.22, 0.85, 0.24, 1) both; }
-.rise-1      { animation-delay: 0.05s; }
-.rise-2      { animation-delay: 0.15s; }
-.rise-3      { animation-delay: 0.25s; }
-.rise-4      { animation-delay: 0.35s; }
-
-/* ====================================================================
-   Underline link
-   ==================================================================== */
-
-.ink-link {
-  color: var(--ink);
-  text-decoration: underline;
-  text-decoration-color: var(--rule);
-  text-underline-offset: 3px;
-  text-decoration-thickness: 1px;
-  transition: text-decoration-color 120ms ease;
-}
-.ink-link:hover { text-decoration-color: var(--oxblood); }
+.rise   { animation: rise 0.5s cubic-bezier(0.22, 0.85, 0.24, 1) both; }
+.rise-1 { animation-delay: 0.04s; }
+.rise-2 { animation-delay: 0.10s; }
+.rise-3 { animation-delay: 0.16s; }
 
 /* ====================================================================
    Selection
@@ -406,5 +253,5 @@ input.paper-input:focus {
 
 ::selection {
   background: var(--ink);
-  color: var(--paper-bright);
+  color: var(--paper);
 }

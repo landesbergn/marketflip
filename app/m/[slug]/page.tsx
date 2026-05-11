@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { getMarketBySlug, getEventBySlug } from "@/lib/polymarket";
 import { CandidateList } from "@/components/CandidateList";
 import { History } from "@/components/History";
-import { RefreshOddsButton } from "@/components/RefreshOddsButton";
+import { Nameplate } from "@/components/Nameplate";
 import { MarketFlipClient } from "./MarketFlipClient";
 import type { FlippableMarket } from "@/lib/types";
+import { fmtVol, fmtResolveDate } from "@/lib/fmt";
 
 export const dynamic = "force-dynamic";
 
@@ -20,8 +20,11 @@ export default async function MarketPage({ params }: PageProps) {
 
   if (market) {
     return (
-      <main className="mx-auto max-w-3xl px-6 py-10 sm:py-14">
-        <Header />
+      <main className="mx-auto max-w-[880px] px-14">
+        <Nameplate showBack />
+        <hr className="border-0 border-t border-[var(--rule)] m-0" />
+        <MarketHeader market={market} />
+        <hr className="border-0 border-t border-[var(--rule)] m-0" />
         <MarketFlipClient market={market} />
         <History slug={slug} />
       </main>
@@ -50,8 +53,11 @@ export default async function MarketPage({ params }: PageProps) {
         url: event.url,
       };
       return (
-        <main className="mx-auto max-w-3xl px-6 py-10 sm:py-14">
-          <Header />
+        <main className="mx-auto max-w-[880px] px-14">
+          <Nameplate showBack />
+          <hr className="border-0 border-t border-[var(--rule)] m-0" />
+          <MarketHeader market={synthetic} />
+          <hr className="border-0 border-t border-[var(--rule)] m-0" />
           <MarketFlipClient market={synthetic} />
           <History slug={slug} />
         </main>
@@ -59,8 +65,23 @@ export default async function MarketPage({ params }: PageProps) {
     }
 
     return (
-      <main className="mx-auto max-w-3xl px-6 py-10 sm:py-14">
-        <Header />
+      <main className="mx-auto max-w-[880px] px-14">
+        <Nameplate showBack />
+        <hr className="border-0 border-t border-[var(--rule)] m-0" />
+        <section className="pt-11 pb-6">
+          <p className="eyebrow">
+            {[fmtResolveDate(event.endDate) ? `resolves ${fmtResolveDate(event.endDate)}` : null]
+              .filter(Boolean)
+              .join(" · ") || "Live event"}
+          </p>
+          <h1
+            className="display mt-3.5"
+            style={{ fontSize: 48, lineHeight: 1.05, maxWidth: 760 }}
+          >
+            {event.question}
+          </h1>
+        </section>
+        <hr className="border-0 border-t border-[var(--rule)] m-0" />
         <CandidateList event={event} />
         <History slug={slug} />
       </main>
@@ -70,19 +91,23 @@ export default async function MarketPage({ params }: PageProps) {
   notFound();
 }
 
-function Header() {
+function MarketHeader({ market }: { market: FlippableMarket }) {
+  const resolves = fmtResolveDate(market.endDate);
+  const vol = market.volume24h > 0 ? fmtVol(market.volume24h) : null;
+  const parts = [
+    resolves ? `resolves ${resolves}` : null,
+    vol ? `vol ${vol}` : null,
+  ].filter(Boolean);
+
   return (
-    <header className="rise rise-1">
-      <div className="flex items-center justify-between">
-        <Link
-          href="/"
-          className="eyebrow text-[var(--ink-soft)] hover:text-[var(--oxblood)] transition-colors"
-        >
-          ← Marketflip
-        </Link>
-        <RefreshOddsButton />
-      </div>
-      <hr className="rule mt-3 mb-2" />
-    </header>
+    <section className="pt-11 pb-6">
+      <p className="eyebrow">{parts.join(" · ") || "Live market"}</p>
+      <h1
+        className="display mt-3.5"
+        style={{ fontSize: 48, lineHeight: 1.05, maxWidth: 760 }}
+      >
+        {market.question}
+      </h1>
+    </section>
   );
 }

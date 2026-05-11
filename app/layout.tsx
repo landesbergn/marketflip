@@ -1,30 +1,29 @@
 import type { Metadata } from "next";
-import { Fraunces, IBM_Plex_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
-const fraunces = Fraunces({
+const geist = Geist({
   subsets: ["latin"],
-  variable: "--font-fraunces",
+  variable: "--font-geist-sans",
   display: "swap",
 });
 
-const plexMono = IBM_Plex_Mono({
+const geistMono = Geist_Mono({
   subsets: ["latin"],
-  variable: "--font-plex-mono",
+  variable: "--font-geist-mono",
   display: "swap",
-  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
-  title: "MarketFlip — Today's Card",
+  title: "MarketFlip — Flip a market",
   description:
-    "Take a Polymarket market. Flip a weighted coin. See what the odds were saying.",
+    "Each market is a coin weighted to its live odds. Pull one for a flip, or a thousand.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${plexMono.variable}`}>
+    <html lang="en" className={`${geist.variable} ${geistMono.variable}`}>
       <body>
         <Providers>{children}</Providers>
       </body>

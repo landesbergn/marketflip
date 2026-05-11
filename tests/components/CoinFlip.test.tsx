@@ -3,7 +3,7 @@ import { render, screen, fireEvent, act } from "@testing-library/react";
 import { CoinFlip } from "@/components/CoinFlip";
 
 describe("<CoinFlip>", () => {
-  it("renders the question and odds", () => {
+  it("renders the idle CTA and exposes odds via aria-label", () => {
     render(
       <CoinFlip
         slug="x"
@@ -14,12 +14,15 @@ describe("<CoinFlip>", () => {
         flipDurationMs={0}
       />
     );
-    expect(screen.getByText(/Will the Fed cut rates/)).toBeInTheDocument();
-    expect(screen.getByText(/Yes 56%/)).toBeInTheDocument();
-    expect(screen.getByText(/No 44%/)).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /flip the coin/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByLabelText(/Implied odds: Yes 56%, No 44%/)
+    ).toBeInTheDocument();
   });
 
-  it("clicking Flip reveals a result and calls onFlipComplete", async () => {
+  it("clicking Flip reveals YES and calls onFlipComplete", async () => {
     const onFlipComplete = vi.fn();
     render(
       <CoinFlip
@@ -32,11 +35,10 @@ describe("<CoinFlip>", () => {
         onFlipComplete={onFlipComplete}
       />
     );
-    const button = screen.getByRole("button", { name: /flip/i });
     await act(async () => {
-      fireEvent.click(button);
+      fireEvent.click(screen.getByRole("button", { name: /flip/i }));
     });
-    expect(screen.getByRole("status")).toHaveTextContent(/🎉 YES/);
+    expect(screen.getByRole("status")).toHaveTextContent(/YES/);
     expect(onFlipComplete).toHaveBeenCalledWith("YES");
   });
 

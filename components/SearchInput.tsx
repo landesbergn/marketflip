@@ -5,8 +5,13 @@ import Link from "next/link";
 import type { FlippableMarket } from "@/lib/types";
 import { track } from "@/lib/posthog";
 
+/**
+ * Underlined search input that filters/searches live as you type.
+ * Hits /api/markets/search after a short debounce.
+ */
 export function SearchInput() {
   const [q, setQ] = useState("");
+  const [focused, setFocused] = useState(false);
   const [results, setResults] = useState<FlippableMarket[] | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -38,44 +43,82 @@ export function SearchInput() {
     };
   }, [q]);
 
+  const borderColor = focused ? "var(--accent)" : "var(--ink)";
+  const iconColor = focused ? "var(--accent)" : "var(--ink-faint)";
+
   return (
-    <div className="w-full">
-      <div className="relative">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ink-faint)] pointer-events-none">
-          ✦
-        </span>
+    <div>
+      <div
+        className="flex items-center gap-3 transition-colors"
+        style={{
+          borderBottom: `1.25px solid ${borderColor}`,
+          padding: "14px 4px 12px",
+        }}
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          style={{ flex: "0 0 auto", color: iconColor, transition: "color 140ms" }}
+          aria-hidden="true"
+        >
+          <circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" strokeWidth="1.4" />
+          <line
+            x1="10.6"
+            y1="10.6"
+            x2="14"
+            y2="14"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+        </svg>
         <input
           type="text"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search the wire…"
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          placeholder="Search markets, categories, candidates…"
           aria-label="Search markets"
-          className="paper-input w-full text-base pl-9 pr-3 py-3"
-          style={{ borderRadius: "2px" }}
+          className="flex-1 border-0 outline-none bg-transparent text-[20px] text-[var(--ink)]"
+          style={{ padding: 0 }}
         />
+        {q && (
+          <button
+            onClick={() => {
+              setQ("");
+              setResults(null);
+            }}
+            className="bg-transparent border-0 cursor-pointer p-0 font-mono text-[11px] tracking-[0.13em] uppercase text-[var(--ink-faint)]"
+          >
+            clear
+          </button>
+        )}
       </div>
-      {loading ? (
-        <p className="eyebrow mt-3 text-[var(--ink-faint)]">
-          Inquiring&hellip;
-        </p>
-      ) : results && results.length === 0 ? (
-        <p className="eyebrow mt-3 text-[var(--ink-faint)]">No matches.</p>
-      ) : results ? (
-        <ul className="mt-3 divide-y divide-[var(--rule-soft)] border-t border-b border-[var(--rule-soft)]">
-          {results.slice(0, 8).map((m) => (
-            <li key={m.slug}>
-              <Link
-                href={`/m/${m.slug}`}
-                className="block px-1 py-2.5 hover:bg-[var(--paper-bright)] transition-colors group"
-              >
-                <span className="text-[0.95rem] text-[var(--ink)] group-hover:text-[var(--oxblood)]">
-                  {m.question}
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      ) : null}
+
+      {q.trim() && (
+        <div className="mt-3">
+          {loading ? (
+            <p className="eyebrow text-[var(--ink-faint)]">Searching&hellip;</p>
+          ) : results && results.length === 0 ? (
+            <p className="eyebrow text-[var(--ink-faint)]">No markets match &ldquo;{q}&rdquo;.</p>
+          ) : results ? (
+            <ul className="m-0 p-0 list-none border-t border-[var(--rule)]">
+              {results.slice(0, 8).map((m) => (
+                <li key={m.slug} className="border-b border-[var(--rule)]">
+                  <Link
+                    href={`/m/${m.slug}`}
+                    className="row-hover block px-3 py-3 text-[16px]"
+                  >
+                    {m.question}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+      )}
     </div>
   );
 }

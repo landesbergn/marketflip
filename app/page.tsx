@@ -2,46 +2,51 @@ import { Suspense } from "react";
 import { TrendingGrid } from "@/components/TrendingGrid";
 import { SearchInput } from "@/components/SearchInput";
 import { PageViewTracker } from "@/components/PageViewTracker";
+import { Nameplate } from "@/components/Nameplate";
 
 export const metadata = {
-  title: "MarketFlip — Today's Card",
+  title: "MarketFlip — Flip a market",
   description:
-    "Take a live Polymarket market, simulate a coin flip weighted by its odds, and see what the market is actually saying.",
+    "Each market is a coin weighted to its live odds. Pull one for a flip, or a thousand.",
 };
 
 export default function HomePage() {
   return (
-    <main className="mx-auto max-w-4xl px-6 py-10 sm:py-14">
+    <main className="mx-auto max-w-[880px] px-14">
       <PageViewTracker event={{ name: "home_viewed" }} />
 
-      {/* Nameplate */}
-      <header className="rise rise-1">
-        <h1 className="headline text-6xl sm:text-7xl md:text-8xl">
-          Market<span className="italic text-[var(--oxblood)]">Flip</span>
+      <Nameplate />
+      <hr className="border-0 border-t border-[var(--rule)] m-0" />
+
+      {/* Headline */}
+      <section className="rise rise-1 pt-12 pb-7">
+        <h1
+          className="display"
+          style={{ fontSize: 64, lineHeight: 1 }}
+        >
+          Flip a{" "}
+          <span style={{ fontStyle: "italic", color: "var(--accent)" }}>
+            market
+          </span>
+          .
         </h1>
-        <p className="mt-3 text-[var(--ink-soft)] text-base sm:text-lg italic">
-          A weighted coin, drawn from the live odds.{" "}
-          <span className="text-[var(--ink-faint)]">— Daily.</span>
+        <p className="mt-4 max-w-[520px] text-[15px] leading-relaxed text-[var(--ink-soft)]">
+          Each market is a coin weighted to its live odds.
         </p>
-        <hr className="rule-double mt-6" />
-      </header>
+      </section>
 
       {/* Search */}
-      <section className="mt-10 rise rise-2">
-        <p className="eyebrow mb-3">Find a market</p>
+      <section className="rise rise-2">
         <SearchInput />
       </section>
 
-      {/* Today's card */}
-      <section className="mt-14 rise rise-3">
-        <div className="flex items-end justify-between mb-4">
-          <h2 className="headline text-3xl sm:text-4xl">Today&rsquo;s Card</h2>
-          <span className="eyebrow hidden sm:inline">By 24-hour Volume</span>
-        </div>
-        <hr className="rule mb-5" />
+      {/* Today's list */}
+      <section className="rise rise-3 mt-7 pb-12">
+        <p className="eyebrow mb-3.5">Today &middot; by 24h volume</p>
+        <hr className="border-0 border-t border-[var(--ink)] m-0" />
         <Suspense
           fallback={
-            <p className="eyebrow text-[var(--ink-faint)]">
+            <p className="eyebrow text-[var(--ink-faint)] py-6">
               Drawing the card&hellip;
             </p>
           }

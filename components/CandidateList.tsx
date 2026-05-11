@@ -3,70 +3,98 @@
 import { useState } from "react";
 import { CoinFlip } from "./CoinFlip";
 import { MarketDescription } from "./MarketDescription";
-import type { ParentEvent, FlipOutcome } from "@/lib/types";
+import { ShareButton } from "./ShareButton";
+import { SimulationPanel } from "./SimulationPanel";
+import type { ParentEvent, FlipOutcome, SimResult } from "@/lib/types";
 import { track } from "@/lib/posthog";
 import { addFlipToHistory } from "@/lib/storage";
+import { extractCandidateName } from "@/lib/fmt";
+import {
+  formatSingleFlipShare,
+  formatSimulationShare,
+} from "@/lib/share";
 
 export function CandidateList({ event }: { event: ParentEvent }) {
   const [selected, setSelected] = useState<string | null>(null);
+  const [lastFlip, setLastFlip] = useState<FlipOutcome | null>(null);
+  const [lastSim, setLastSim] = useState<SimResult | null>(null);
 
   const sub = event.subMarkets.find((s) => s.slug === selected) ?? null;
+  const subUrl =
+    typeof window !== "undefined" && sub
+      ? window.location.href
+      : sub?.slug ?? "";
 
   return (
     <div>
-      <header className="text-center mb-8">
-        <p className="eyebrow text-[var(--ink-faint)]">The Field</p>
-        <h1 className="headline text-3xl sm:text-4xl mt-2">{event.question}</h1>
-        <p className="figure mt-2 text-sm text-[var(--ink-soft)]">
-          {event.subMarkets.length} candidates ·{" "}
-          <span className="italic">pick one to flip</span>
+      <section className="pt-10 pb-6">
+        <p className="eyebrow">The field</p>
+        <p className="mt-4 text-xl leading-snug max-w-2xl">
+          Each candidate is its own coin. Probabilities sum below 100% — the
+          market keeps room for what it doesn&rsquo;t know.
         </p>
-        <hr className="rule mx-auto mt-4 w-24" />
-      </header>
+      </section>
 
-      <ul className="space-y-1.5 border-y border-[var(--rule)] divide-y divide-[var(--rule-soft)]">
-        {event.subMarkets.map((s, idx) => (
-          <li key={s.slug}>
-            <button
-              onClick={() => setSelected(s.slug)}
-              className={`w-full text-left px-3 py-3 text-sm flex justify-between items-baseline gap-4 transition-colors ${
-                selected === s.slug
-                  ? "bg-[var(--paper-bright)]"
-                  : "hover:bg-[var(--paper-bright)]"
-              }`}
-            >
-              <span className="flex items-baseline gap-3 min-w-0">
-                <span className="eyebrow text-[var(--ink-faint)] tabular-nums">
-                  {String(idx + 1).padStart(2, "0")}
-                </span>
-                <span className="font-semibold truncate">{s.question}</span>
-              </span>
-              <span className="figure text-[var(--ink)] whitespace-nowrap">
-                <span
-                  className={`${
-                    selected === s.slug
-                      ? "text-[var(--oxblood)]"
-                      : "text-[var(--ink-soft)]"
-                  }`}
+      <section className="pb-12">
+        <p className="eyebrow mb-3">Pick one to flip</p>
+        <hr className="border-0 border-t border-[var(--ink)] m-0" />
+        <ul className="m-0 p-0 list-none">
+          {event.subMarkets.map((s) => {
+            const pct = Math.round(s.yesProbability * 100);
+            const isSelected = selected === s.slug;
+            return (
+              <li key={s.slug} className="border-b border-[var(--rule)]">
+                <button
+                  onClick={() => {
+                    setSelected(s.slug);
+                    setLastFlip(null);
+                    setLastSim(null);
+                  }}
+                  className="row-hover w-full text-left grid items-center gap-6 px-3 py-5"
+                  style={{
+                    gridTemplateColumns: "220px 1fr 80px",
+                    background: isSelected ? "var(--paper-soft)" : undefined,
+                  }}
                 >
-                  {Math.round(s.yesProbability * 100)}%
-                </span>{" "}
-                <span className="text-[var(--ink-faint)]">→</span>
-              </span>
-            </button>
-          </li>
-        ))}
-      </ul>
+                  <span className="text-[20px] leading-snug">
+                    {extractCandidateName(s.question)}
+                  </span>
+                  <span className="block h-2 bg-[var(--rule-soft)] relative">
+                    <span
+                      className="absolute inset-0 block"
+                      style={{
+                        width: `${pct}%`,
+                        background: "var(--accent)",
+                      }}
+                    />
+                  </span>
+                  <span
+                    className="text-right text-[28px] italic"
+                    style={{
+                      color: "var(--accent)",
+                      lineHeight: 1,
+                    }}
+                  >
+                    {pct}%
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
 
-      {sub ? (
-        <div className="mt-10 pt-10 border-t-2 border-[var(--ink)]">
+      {sub && (
+        <section className="pt-10 mt-10 border-t-2 border-[var(--ink)]">
           <CoinFlip
             slug={sub.slug}
-            question={sub.question}
+            question={extractCandidateName(sub.question) + " wins."}
             yesProbability={sub.yesProbability}
-            outcomeYesLabel="Yes"
-            outcomeNoLabel="No"
+            outcomeYesLabel={extractCandidateName(sub.question)}
+            outcomeNoLabel="Someone else"
             onFlipComplete={(o: FlipOutcome) => {
+              setLastFlip(o);
+              setLastSim(null);
               track({
                 name: "flip_executed",
                 props: {
@@ -85,8 +113,54 @@ export function CandidateList({ event }: { event: ParentEvent }) {
               });
             }}
           />
-        </div>
-      ) : null}
+
+          {lastFlip && (
+            <div className="flex flex-wrap gap-4 -mt-4 mb-4">
+              <ShareButton
+                slug={sub.slug}
+                mode="single"
+                text={formatSingleFlipShare({
+                  question: sub.question,
+                  yesProbability: sub.yesProbability,
+                  flipped: lastFlip,
+                  url: subUrl,
+                })}
+              />
+              <SimulationPanel
+                slug={sub.slug}
+                question={sub.question}
+                yesProbability={sub.yesProbability}
+                onSimulationComplete={(r) => {
+                  setLastSim(r);
+                  track({
+                    name: "simulation_run",
+                    props: {
+                      slug: sub.slug,
+                      n: r.n,
+                      observed_yes_count: r.yesCount,
+                    },
+                  });
+                }}
+              />
+            </div>
+          )}
+
+          {lastSim && (
+            <ShareButton
+              slug={sub.slug}
+              mode="sim"
+              text={formatSimulationShare({
+                question: sub.question,
+                yesProbability: sub.yesProbability,
+                n: lastSim.n,
+                yesCount: lastSim.yesCount,
+                noCount: lastSim.noCount,
+                url: subUrl,
+              })}
+            />
+          )}
+        </section>
+      )}
 
       <MarketDescription text={event.description} />
     </div>
