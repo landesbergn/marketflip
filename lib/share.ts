@@ -25,7 +25,6 @@ const fmtInt = (n: number) => n.toLocaleString("en-US");
 export function formatSingleFlipShare(s: SingleFlipShare): string {
   const emoji = s.flipped === "YES" ? "🎉" : "🚨";
   return [
-    "🪙 MarketFlip",
     `"${s.question}"`,
     `Market said: ${fmtPct(s.yesProbability)} YES`,
     `I flipped: ${emoji} ${s.flipped}`,
@@ -36,9 +35,8 @@ export function formatSingleFlipShare(s: SingleFlipShare): string {
 export function formatSimulationShare(s: SimulationShare): string {
   const observed = s.yesCount / s.n;
   return [
-    `🪙 MarketFlip — ${fmtInt(s.n)} sims`,
     `"${s.question}"`,
-    `Implied: ${fmtPct(s.yesProbability)} · Observed: ${fmtPct(observed, 1)}`,
+    `${fmtInt(s.n)} sims · Implied: ${fmtPct(s.yesProbability)} · Observed: ${fmtPct(observed, 1)}`,
     `YES ${fmtInt(s.yesCount)} · NO ${fmtInt(s.noCount)}`,
     s.url,
   ].join("\n");

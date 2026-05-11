@@ -14,7 +14,6 @@ describe("formatSingleFlipShare", () => {
     });
     expect(out).toBe(
       [
-        "🪙 MarketFlip",
         '"Will the Fed cut rates in June?"',
         "Market said: 56% YES",
         "I flipped: 🚨 NO",
@@ -56,9 +55,8 @@ describe("formatSimulationShare", () => {
     });
     expect(out).toBe(
       [
-        "🪙 MarketFlip — 1,000 sims",
         '"Will the Fed cut rates in June?"',
-        "Implied: 56% · Observed: 56.2%",
+        "1,000 sims · Implied: 56% · Observed: 56.2%",
         "YES 562 · NO 438",
         "https://marketflip.app/m/fed-rates-june-2026",
       ].join("\n")
