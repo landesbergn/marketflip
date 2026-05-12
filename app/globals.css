@@ -581,14 +581,15 @@ dialog.about-dialog::backdrop {
   line-height: 1;
 }
 
-/* Disclosure button used by "See the 100 futures" — full-width, with
-   a 44px tap target and accent count on the right. */
+/* Disclosure button used by "See the 100 futures" — full-width, with a
+   44px tap target and accent count on the right. No top divider in the
+   default state so the coin's shadow has room to breathe; the rule
+   appears once the section is expanded. */
 .mf-disclosure {
   width: 100%;
   background: transparent;
   border: 0;
   padding: 10px 0;
-  border-top: 1px solid var(--rule);
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -600,4 +601,5 @@ dialog.about-dialog::backdrop {
   color: var(--ink-faint);
   min-height: 44px;
 }
+.mf-disclosure--open { border-top: 1px solid var(--rule); }
 .mf-disclosure:hover { color: var(--ink); }

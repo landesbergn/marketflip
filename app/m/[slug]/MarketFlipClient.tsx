@@ -340,7 +340,7 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
       </section>
 
       {/* ── Coin + desktop side panel ──────────────────────────── */}
-      <section className="pt-4 sm:pt-8 pb-1 sm:pb-6 lg:grid lg:gap-12 lg:grid-cols-2 lg:items-start">
+      <section className="pt-4 sm:pt-8 pb-3 sm:pb-6 lg:grid lg:gap-12 lg:grid-cols-2 lg:items-start">
         <div className="flex flex-col items-center lg:items-stretch">
           <CoinFlip
             ref={coinRef}
@@ -452,7 +452,7 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
       <section className="lg:hidden pb-6">
         <button
           onClick={() => setFuturesOpen((o) => !o)}
-          className="mf-disclosure"
+          className={`mf-disclosure${futuresOpen ? " mf-disclosure--open" : ""}`}
           aria-expanded={futuresOpen}
         >
           <span>
