@@ -19,11 +19,22 @@ export default async function MarketPage({ params }: PageProps) {
   );
 
   if (market) {
-    // If this market belongs to a multi-outcome event, send the back link
-    // to the event field instead of the home page.
+    // Only show a "← The field" back link when the parent event actually
+    // has multiple sub-markets. Every Polymarket binary market technically
+    // belongs to an event, but most events are single-market wrappers
+    // with no "field" to navigate back to.
     const parent = market.parentEvent;
-    const backHref = parent ? `/m/${parent.slug}` : "/";
-    const backLabel = parent ? "← The field" : "← Today";
+    let backHref = "/";
+    let backLabel = "← Today";
+    if (parent) {
+      const parentEvent = await getEventBySlug(parent.slug, {
+        next: { revalidate: 300 },
+      }).catch(() => null);
+      if (parentEvent && parentEvent.subMarkets.length > 1) {
+        backHref = `/m/${parent.slug}`;
+        backLabel = "← The field";
+      }
+    }
     return (
       <main className="mx-auto max-w-[1024px] px-14">
         <Nameplate showBack backHref={backHref} backLabel={backLabel} />
