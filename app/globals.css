@@ -142,11 +142,20 @@ body {
   width: 156px;
   height: 178px;
   perspective: 900px;
+  /* Toss arc translation values; overridden per breakpoint so the
+     animation scales with the coin. Negative values used in keyframes
+     below via calc(). */
+  --toss-peak: 86px;
+  --toss-mid: 132px;
+  --toss-overshoot: 16px;
 }
 @media (min-width: 640px) {
   .coin-stage {
     width: 190px;
     height: 214px;
+    --toss-peak: 104px;
+    --toss-mid: 161px;
+    --toss-overshoot: 19px;
   }
 }
 
@@ -349,31 +358,51 @@ dialog.about-dialog::backdrop {
 .ink-link:hover { opacity: 0.75; }
 
 /* ====================================================================
-   Flip-history dots (responsive)
+   Probability dots — shared between the implied 100-dot grid and the
+   flip-history grid so they read as a visual pair. Same sizing rules
+   at every breakpoint.
    ==================================================================== */
 
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+.dot--yes { background: var(--accent); }
+.dot--no {
+  background: transparent;
+  border: 1.25px solid var(--ink);
+  opacity: 0.55;
+}
+
+@media (min-width: 640px) {
+  .dot { width: 18px; height: 18px; }
+}
+
+/* Implied 100-dot grid: fixed 20-column layout */
+.dot-grid {
+  display: grid;
+  grid-template-columns: repeat(20, 14px);
+  gap: 2px;
+}
+@media (min-width: 640px) {
+  .dot-grid {
+    grid-template-columns: repeat(20, 18px);
+    gap: 3px;
+  }
+}
+
+/* Your-flips history grid: flex-wrap so the grid grows downward as
+   more flips accumulate (matches the 20-wide implied grid in width). */
 .flip-dots {
   display: flex;
   flex-wrap: wrap;
   gap: 2px;
   max-width: 100%;
 }
-.flip-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-}
 @media (min-width: 640px) {
   .flip-dots { gap: 3px; }
-  .flip-dot { width: 18px; height: 18px; }
-}
-.flip-dot--yes {
-  background: var(--accent);
-}
-.flip-dot--no {
-  background: transparent;
-  border: 1.25px solid var(--ink);
-  opacity: 0.55;
 }
 
 /* Candidate ledger row — name + bar + pct, shrinks the name column on

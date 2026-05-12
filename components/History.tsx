@@ -128,7 +128,7 @@ function FlipDots({ entries }: { entries: HistoryEntry[] }) {
           <div
             key={e.timestamp}
             title={`${e.flippedTo} · ${new Date(e.timestamp).toLocaleString()}`}
-            className={`flip-dot ${filled ? "flip-dot--yes" : "flip-dot--no"}`}
+            className={`dot ${filled ? "dot--yes" : "dot--no"}`}
           />
         );
       })}

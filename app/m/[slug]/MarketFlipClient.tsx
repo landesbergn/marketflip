@@ -123,7 +123,7 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
         }}
       />
 
-      <section className="pt-8 pb-6 grid gap-12 lg:grid-cols-2 items-start">
+      <section className="pt-6 sm:pt-8 pb-6 grid gap-8 lg:gap-12 lg:grid-cols-2 items-start">
         {/* Left: Flip */}
         <div>
           <CoinFlip
