@@ -16,21 +16,19 @@ export function Nameplate({
   backHref = "/",
   backLabel = "← Today",
 }: Props) {
-  // The label arrives prefixed with "← ", e.g. "← The field". Mobile shows
-  // just the arrow with a 44px tap zone; desktop keeps the full text.
-  const trimmedLabel = backLabel.replace(/^←\s*/, "");
-
   return (
     <header className="mf-nameplate sticky top-0 z-30">
       <div className="mf-nameplate__inner mx-auto max-w-[1024px] px-5 sm:px-8 lg:px-14 flex justify-between items-center gap-3">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          {/* Mobile-only back affordance: icon with a 44px tap zone. The full
+              text back link lives on the right next to About on desktop. */}
           {showBack && (
             <Link
               href={backHref}
-              className="mf-back inline-flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--ink)] transition-colors"
+              aria-label={backLabel.replace(/^←\s*/, "") || "Back"}
+              className="mf-back-mobile inline-flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--ink)] transition-colors sm:hidden"
             >
-              <span aria-hidden className="mf-back__arrow">←</span>
-              <span className="mf-back__label">{` ${trimmedLabel}`}</span>
+              <span aria-hidden style={{ fontSize: 18, lineHeight: 1 }}>←</span>
             </Link>
           )}
           <Link
@@ -51,9 +49,6 @@ export function Nameplate({
               style={{
                 display: "inline-block",
                 lineHeight: 1,
-                // Italic glyphs (the 'p' in "Flip") have a right-side slant
-                // that extends past the inline box; padding-right absorbs it
-                // so nothing visually clips the wordmark.
                 paddingRight: "0.06em",
               }}
             >
@@ -62,6 +57,14 @@ export function Nameplate({
           </Link>
         </div>
         <div className="flex items-center gap-3 sm:gap-5 flex-none">
+          {showBack && (
+            <Link
+              href={backHref}
+              className="eyebrow hidden sm:inline-flex items-center whitespace-nowrap"
+            >
+              {backLabel}
+            </Link>
+          )}
           <AboutButton />
         </div>
       </div>

@@ -125,8 +125,11 @@ export const CoinFlip = forwardRef<CoinFlipHandle, CoinFlipProps>(function CoinF
   const faceFontSize =
     coinScale != null ? Math.round(coinScale * 0.4) : undefined;
 
+  const bothHidden = hideButton && hideVerdict;
   return (
-    <section className="flex flex-col items-center gap-6 text-center">
+    <section
+      className={`flex flex-col items-center text-center ${bothHidden ? "gap-1" : "gap-6"}`}
+    >
       <button
         type="button"
         onClick={handleFlip}
@@ -171,6 +174,9 @@ export const CoinFlip = forwardRef<CoinFlipHandle, CoinFlipProps>(function CoinF
       <div
         className="w-full flex flex-col items-center"
         aria-label={`Implied odds: ${outcomeYesLabel} ${yesPct}%, ${outcomeNoLabel} ${noPct}%`}
+        // When the parent owns both the CTA and the verdict (mobile), the
+        // implied-odds region is announce-only and stays out of the flow.
+        style={bothHidden ? { position: "absolute", width: 0, height: 0, overflow: "hidden", clip: "rect(0 0 0 0)" } : undefined}
       >
         {!hideButton && phase === "idle" && (
           <>

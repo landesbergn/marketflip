@@ -242,10 +242,15 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
           style={{
             lineHeight: 1.06,
             maxWidth: 760,
-            textDecoration: landed ? "line-through" : "none",
-            textDecorationColor: landed ? "rgba(10,10,10,0.4)" : undefined,
-            textDecorationThickness: landed ? "1.2px" : undefined,
-            color: landed ? "var(--ink-faint)" : "var(--ink)",
+            // Only YES "answers" the question — strike through to show the
+            // market resolved in its favor. A NO outcome leaves the
+            // question intact (the proposition didn't happen).
+            textDecoration: landed && lastFlip === "YES" ? "line-through" : "none",
+            textDecorationColor:
+              landed && lastFlip === "YES" ? "rgba(10,10,10,0.4)" : undefined,
+            textDecorationThickness:
+              landed && lastFlip === "YES" ? "1.2px" : undefined,
+            color: landed && lastFlip === "YES" ? "var(--ink-faint)" : "var(--ink)",
             transition: "color 360ms ease",
           }}
         >
@@ -335,7 +340,7 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
       </section>
 
       {/* ── Coin + desktop side panel ──────────────────────────── */}
-      <section className="pt-4 sm:pt-8 pb-6 lg:grid lg:gap-12 lg:grid-cols-2 lg:items-start">
+      <section className="pt-4 sm:pt-8 pb-1 sm:pb-6 lg:grid lg:gap-12 lg:grid-cols-2 lg:items-start">
         <div className="flex flex-col items-center lg:items-stretch">
           <CoinFlip
             ref={coinRef}

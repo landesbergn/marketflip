@@ -474,35 +474,13 @@ dialog.about-dialog::backdrop {
   line-height: 0;
 }
 
-/* Back link: icon-only with a 44px tap zone on mobile, full label on
-   desktop. */
-.mf-back {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+/* Mobile-only back affordance: 44px tap zone for the bare arrow icon.
+   Desktop renders a separate text "← The field" link on the right side
+   of the header (via .eyebrow). */
+.mf-back-mobile {
   min-width: 44px;
   min-height: 44px;
   margin-left: -10px;
-}
-.mf-back__arrow {
-  font-size: 18px;
-  line-height: 1;
-}
-.mf-back__label {
-  display: none;
-}
-@media (min-width: 640px) {
-  .mf-back {
-    min-width: 0;
-    margin-left: 0;
-  }
-  .mf-back__arrow {
-    display: none;
-  }
-  .mf-back__label {
-    display: inline;
-  }
 }
 
 /* About: 30×30 circle "i" on mobile (44px tap zone via padding),
@@ -609,8 +587,7 @@ dialog.about-dialog::backdrop {
   width: 100%;
   background: transparent;
   border: 0;
-  padding: 12px 0;
-  margin-top: 4px;
+  padding: 10px 0;
   border-top: 1px solid var(--rule);
   cursor: pointer;
   display: flex;
