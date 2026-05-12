@@ -88,7 +88,7 @@ export default async function MarketPage({ params }: PageProps) {
             </p>
             <h1
               className="display mt-2.5 sm:mt-3.5 text-[28px] sm:text-[40px] md:text-[48px]"
-              style={{ lineHeight: 1.06, maxWidth: 760 }}
+              style={{ lineHeight: 1.06 }}
             >
               {event.question}
             </h1>
