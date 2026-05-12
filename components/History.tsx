@@ -93,7 +93,11 @@ export function History({
             <span className="not-italic" style={{ color: "var(--accent)" }}>
               {entries.length}
             </span>{" "}
-            {entries.length === 1 ? "flip" : "flips"}.
+            {entries.length === 1 ? "flip" : "flips"}
+            <span className="not-italic text-[var(--ink-soft)]">
+              {" "}({Math.round((yesCount / entries.length) * 100)}%)
+            </span>
+            .
           </p>
 
           <div className="mt-5">
