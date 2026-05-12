@@ -5,8 +5,6 @@ import {
   fmtResolveDate,
   fmtVol,
   isLiteralYesNo,
-  matchupStatement,
-  questionToStatement,
   reframeQuestion,
   verdictCopy,
   verdictFor,
@@ -61,24 +59,6 @@ describe("extractCandidateName", () => {
   });
 });
 
-describe("questionToStatement", () => {
-  it("strips leading 'Will ' and trailing '?'", () => {
-    expect(questionToStatement("Will the Fed cut rates in June?")).toBe(
-      "The Fed cut rates in June."
-    );
-  });
-
-  it("preserves declarative input", () => {
-    expect(questionToStatement("Bitcoin clears $200k")).toBe(
-      "Bitcoin clears $200k."
-    );
-  });
-
-  it("returns empty string for empty input", () => {
-    expect(questionToStatement("")).toBe("");
-  });
-});
-
 describe("isLiteralYesNo", () => {
   it("is true for the canonical Yes / No pair", () => {
     expect(isLiteralYesNo("Yes", "No")).toBe(true);
@@ -125,14 +105,6 @@ describe("reframeQuestion", () => {
     expect(
       reframeQuestion("Pistons vs. Cavaliers", "Yes", "No")
     ).toBe("Pistons vs. Cavaliers");
-  });
-});
-
-describe("matchupStatement", () => {
-  it("forms 'X beat Y.'", () => {
-    expect(matchupStatement("Pistons", "Cavaliers")).toBe(
-      "Pistons beat Cavaliers."
-    );
   });
 });
 

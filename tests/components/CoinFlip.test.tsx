@@ -7,7 +7,6 @@ describe("<CoinFlip>", () => {
     render(
       <CoinFlip
         slug="x"
-        question="Will the Fed cut rates?"
         yesProbability={0.56}
         outcomeYesLabel="Yes"
         outcomeNoLabel="No"
@@ -27,7 +26,6 @@ describe("<CoinFlip>", () => {
     render(
       <CoinFlip
         slug="x"
-        question="Will Bitcoin hit $200k by year-end?"
         yesProbability={1}
         outcomeYesLabel="Yes"
         outcomeNoLabel="No"
@@ -56,7 +54,6 @@ describe("<CoinFlip>", () => {
     render(
       <CoinFlip
         slug="x"
-        question="Q?"
         yesProbability={0}
         outcomeYesLabel="Yes"
         outcomeNoLabel="No"
@@ -78,7 +75,6 @@ describe("<CoinFlip>", () => {
     render(
       <CoinFlip
         slug="x"
-        question="Pistons vs. Cavaliers"
         yesProbability={1}
         outcomeYesLabel="Pistons"
         outcomeNoLabel="Cavaliers"

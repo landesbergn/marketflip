@@ -26,25 +26,6 @@ export function extractCandidateName(question: string): string {
 }
 
 /**
- * Turn a Polymarket-style question into a declarative statement.
- * "Will the Fed cut rates in June?" -> "The Fed cut rates in June."
- *
- * Pairs with a big YES./NO. header to communicate the outcome contextually
- * without needing hand-written yes/no copy per market.
- */
-export function questionToStatement(question: string): string {
-  if (!question) return "";
-  let s = question.trim();
-  // Strip leading "Will " (case-insensitive) and trailing "?"s.
-  s = s.replace(/^Will\s+/i, "").replace(/\?+\s*$/, "").trim();
-  if (!s) return question.trim();
-  // Capitalize first letter, ensure trailing period.
-  s = s.charAt(0).toUpperCase() + s.slice(1);
-  if (!/[.!?]$/.test(s)) s += ".";
-  return s;
-}
-
-/**
  * Whether the market's outcome labels are the literal "Yes"/"No" pair.
  * When false, the labels carry meaning (e.g. team names, candidate names)
  * and should be displayed in place of "YES"/"NO" throughout the UI.
@@ -84,18 +65,6 @@ export function reframeQuestion(
   if (!yesLabel || !noLabel) return question;
   if (!/\bvs\.?\b/i.test(question)) return question;
   return `Will ${yesLabel} beat ${noLabel}?`;
-}
-
-/**
- * Declarative statement for a matchup outcome.
- * "Pistons beat Cavaliers." — plural verb is the natural form for
- * most sports-team labels and reads acceptably for singular ones.
- */
-export function matchupStatement(
-  winnerLabel: string,
-  loserLabel: string
-): string {
-  return `${winnerLabel} beat ${loserLabel}.`;
 }
 
 export type Verdict = "AS EXPECTED" | "A TOSS-UP" | "SURPRISE";

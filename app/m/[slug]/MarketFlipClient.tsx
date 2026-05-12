@@ -281,7 +281,6 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
           <CoinFlip
             ref={coinRef}
             slug={market.slug}
-            question={displayQuestion}
             yesProbability={yesProbability}
             outcomeYesLabel={yesLabelText}
             outcomeNoLabel={noLabelText}

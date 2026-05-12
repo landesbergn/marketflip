@@ -9,19 +9,11 @@ import {
   useState,
 } from "react";
 import { flip } from "@/lib/flip";
-import {
-  displayLabel,
-  isLiteralYesNo,
-  matchupStatement,
-  questionToStatement,
-  verdictCopy,
-  verdictFor,
-} from "@/lib/fmt";
+import { displayLabel, verdictCopy, verdictFor } from "@/lib/fmt";
 import type { FlipOutcome } from "@/lib/types";
 
 export type CoinFlipProps = {
   slug: string;
-  question: string;
   yesProbability: number;
   outcomeYesLabel: string;
   outcomeNoLabel: string;
@@ -56,7 +48,6 @@ export const CoinFlip = forwardRef<CoinFlipHandle, CoinFlipProps>(function CoinF
   ref
 ) {
   const {
-    question,
     yesProbability,
     outcomeYesLabel,
     outcomeNoLabel,
@@ -196,7 +187,6 @@ export const CoinFlip = forwardRef<CoinFlipHandle, CoinFlipProps>(function CoinF
         {!hideVerdict && phase === "landed" && result && (
           <Result
             result={result}
-            question={question}
             yesPct={yesPct}
             outcomeYesLabel={outcomeYesLabel}
             outcomeNoLabel={outcomeNoLabel}
@@ -210,14 +200,12 @@ export const CoinFlip = forwardRef<CoinFlipHandle, CoinFlipProps>(function CoinF
 
 function Result({
   result,
-  question,
   yesPct,
   outcomeYesLabel,
   outcomeNoLabel,
   onAgain,
 }: {
   result: FlipOutcome;
-  question: string;
   yesPct: number;
   outcomeYesLabel: string;
   outcomeNoLabel: string;
@@ -225,22 +213,9 @@ function Result({
 }) {
   const noPct = 100 - yesPct;
   const landedOdds = result === "YES" ? yesPct : noPct;
-  const literal = isLiteralYesNo(outcomeYesLabel, outcomeNoLabel);
   const landedLabel = displayLabel(result, outcomeYesLabel, outcomeNoLabel);
-  const winnerLabel =
-    result === "YES" ? outcomeYesLabel : outcomeNoLabel;
-  const loserLabel =
-    result === "YES" ? outcomeNoLabel : outcomeYesLabel;
-  const statement = literal
-    ? questionToStatement(question)
-    : matchupStatement(winnerLabel, loserLabel);
-
   const verdict = verdictFor(result, yesPct / 100);
   const verdictMsg = verdictCopy(verdict, landedLabel.toUpperCase(), landedOdds);
-  void statement;
-  void literal;
-  void winnerLabel;
-  void loserLabel;
 
   return (
     <div className="flex flex-col items-center text-center">
