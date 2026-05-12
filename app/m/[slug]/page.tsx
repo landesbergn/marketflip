@@ -19,9 +19,14 @@ export default async function MarketPage({ params }: PageProps) {
   );
 
   if (market) {
+    // If this market belongs to a multi-outcome event, send the back link
+    // to the event field instead of the home page.
+    const parent = market.parentEvent;
+    const backHref = parent ? `/m/${parent.slug}` : "/";
+    const backLabel = parent ? "← The field" : "← Today";
     return (
       <main className="mx-auto max-w-[1024px] px-14">
-        <Nameplate showBack />
+        <Nameplate showBack backHref={backHref} backLabel={backLabel} />
         <hr className="border-0 border-t border-[var(--rule)] m-0" />
         <MarketHeader market={market} />
         <hr className="border-0 border-t border-[var(--rule)] m-0" />

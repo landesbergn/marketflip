@@ -2,11 +2,19 @@ import Link from "next/link";
 import { HeaderCoin } from "./HeaderCoin";
 
 type Props = {
-  /** Show the "← Today" link on the right (used on non-home pages). */
+  /** Show a "back" link on the right (used on non-home pages). */
   showBack?: boolean;
+  /** Override the back link's href. Defaults to "/". */
+  backHref?: string;
+  /** Override the back link's label. Defaults to "← Today". */
+  backLabel?: string;
 };
 
-export function Nameplate({ showBack = false }: Props) {
+export function Nameplate({
+  showBack = false,
+  backHref = "/",
+  backLabel = "← Today",
+}: Props) {
   return (
     <header className="pt-6 pb-4">
       <div
@@ -30,8 +38,8 @@ export function Nameplate({ showBack = false }: Props) {
           </span>
         </Link>
         {showBack && (
-          <Link href="/" className="eyebrow inline-flex items-center">
-            ← Today
+          <Link href={backHref} className="eyebrow inline-flex items-center">
+            {backLabel}
           </Link>
         )}
       </div>
