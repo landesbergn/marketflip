@@ -12,7 +12,7 @@ export const metadata = {
 
 export default function HomePage() {
   return (
-    <main className="mx-auto max-w-[1024px] px-14">
+    <main className="mx-auto max-w-[1024px] px-5 sm:px-8 lg:px-14">
       <PageViewTracker event={{ name: "home_viewed" }} />
 
       <Nameplate />

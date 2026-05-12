@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="mx-auto max-w-[1024px] px-14 py-24 text-center">
+    <main className="mx-auto max-w-[1024px] px-5 sm:px-8 lg:px-14 py-24 text-center">
       <p className="eyebrow">404</p>
       <h1 className="display mt-4" style={{ fontSize: 48, lineHeight: 1.05 }}>
         No such market.

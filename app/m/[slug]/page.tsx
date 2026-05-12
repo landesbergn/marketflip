@@ -36,7 +36,7 @@ export default async function MarketPage({ params }: PageProps) {
       }
     }
     return (
-      <main className="mx-auto max-w-[1024px] px-14">
+      <main className="mx-auto max-w-[1024px] px-5 sm:px-8 lg:px-14">
         <Nameplate showBack backHref={backHref} backLabel={backLabel} />
         <hr className="border-0 border-t border-[var(--rule)] m-0" />
         <MarketHeader market={market} />
@@ -68,7 +68,7 @@ export default async function MarketPage({ params }: PageProps) {
         url: event.url,
       };
       return (
-        <main className="mx-auto max-w-[1024px] px-14">
+        <main className="mx-auto max-w-[1024px] px-5 sm:px-8 lg:px-14">
           <Nameplate showBack />
           <hr className="border-0 border-t border-[var(--rule)] m-0" />
           <MarketHeader market={synthetic} />
@@ -79,18 +79,18 @@ export default async function MarketPage({ params }: PageProps) {
     }
 
     return (
-      <main className="mx-auto max-w-[1024px] px-14">
+      <main className="mx-auto max-w-[1024px] px-5 sm:px-8 lg:px-14">
         <Nameplate showBack />
         <hr className="border-0 border-t border-[var(--rule)] m-0" />
-        <section className="pt-11 pb-6">
+        <section className="pt-8 sm:pt-11 pb-6">
           <p className="eyebrow">
             {[fmtResolveDate(event.endDate) ? `resolves ${fmtResolveDate(event.endDate)}` : null]
               .filter(Boolean)
               .join(" · ") || "Live event"}
           </p>
           <h1
-            className="display mt-3.5"
-            style={{ fontSize: 48, lineHeight: 1.05, maxWidth: 760 }}
+            className="display mt-3 sm:mt-3.5 text-[34px] sm:text-[40px] md:text-[48px]"
+            style={{ lineHeight: 1.05, maxWidth: 760 }}
           >
             {event.question}
           </h1>
@@ -119,11 +119,11 @@ function MarketHeader({ market }: { market: FlippableMarket }) {
   );
 
   return (
-    <section className="pt-11 pb-6">
+    <section className="pt-8 sm:pt-11 pb-6">
       <p className="eyebrow">{parts.join(" · ") || "Live market"}</p>
       <h1
-        className="display mt-3.5"
-        style={{ fontSize: 48, lineHeight: 1.05, maxWidth: 760 }}
+        className="display mt-3 sm:mt-3.5 text-[34px] sm:text-[40px] md:text-[48px]"
+        style={{ lineHeight: 1.05, maxWidth: 760 }}
       >
         {displayQuestion}
       </h1>
