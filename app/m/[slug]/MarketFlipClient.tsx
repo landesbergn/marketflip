@@ -163,7 +163,7 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
         {/* Right: The Reading + Your Flips */}
         <div className="flex flex-col gap-6">
           <p
-            className="text-[24px] italic leading-snug m-0"
+            className="text-[20px] sm:text-[24px] italic leading-snug m-0"
             style={{ color: "var(--ink)" }}
           >
             The market sees{" "}
@@ -182,7 +182,7 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
           </p>
 
           <div>
-            <DotGrid yesProb={yesProbability} cols={20} size={18} gap={3} />
+            <DotGrid yesProb={yesProbability} cols={20} />
             <div className="flex gap-6 mt-5">
               <LegendDot solid label={`${yesPct} ${yesLabelText}`} />
               <LegendDot solid={false} label={`${noPct} ${noLabelText}`} />

@@ -22,10 +22,9 @@ export function CandidateList({ event }: { event: ParentEvent }) {
               <li key={s.slug} className="border-b border-[var(--rule)]">
                 <Link
                   href={`/m/${s.slug}`}
-                  className="row-hover w-full text-left grid items-center gap-6 px-3 py-5"
-                  style={{ gridTemplateColumns: "220px 1fr 80px" }}
+                  className="row-hover w-full text-left grid items-center gap-4 sm:gap-6 px-3 py-4 sm:py-5 candidate-row"
                 >
-                  <span className="text-[20px] leading-snug">
+                  <span className="text-[17px] sm:text-[20px] leading-snug truncate">
                     {extractCandidateName(s.question)}
                   </span>
                   <span className="block h-2 bg-[var(--rule-soft)] relative">
@@ -38,7 +37,7 @@ export function CandidateList({ event }: { event: ParentEvent }) {
                     />
                   </span>
                   <span
-                    className="text-right text-[28px] italic"
+                    className="text-right text-[22px] sm:text-[28px] italic whitespace-nowrap"
                     style={{ color: "var(--accent)", lineHeight: 1 }}
                   >
                     {pct}%

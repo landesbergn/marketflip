@@ -17,30 +17,34 @@ export function Nameplate({
   backLabel = "← Today",
 }: Props) {
   return (
-    <header className="pt-6 pb-4">
+    <header className="pt-5 sm:pt-6 pb-4">
       <div
-        className="flex justify-between items-center"
+        className="flex justify-between items-center gap-3"
         style={{ minHeight: 32 }}
       >
         <Link
           href="/"
-          className="inline-flex items-center gap-3"
+          className="inline-flex items-center gap-2 sm:gap-3 text-[20px] sm:text-[26px] min-w-0"
           style={{
-            fontSize: 26,
             lineHeight: 1,
             letterSpacing: "-0.022em",
             color: "var(--ink)",
             fontWeight: 600,
           }}
         >
-          <HeaderCoin />
-          <span style={{ display: "inline-block", lineHeight: 1 }}>
+          <span className="flex-none">
+            <HeaderCoin />
+          </span>
+          <span className="truncate" style={{ display: "inline-block", lineHeight: 1 }}>
             Market<span style={{ fontStyle: "italic", color: "var(--accent)" }}>Flip</span>
           </span>
         </Link>
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-3 sm:gap-5 flex-none">
           {showBack && (
-            <Link href={backHref} className="eyebrow inline-flex items-center">
+            <Link
+              href={backHref}
+              className="eyebrow inline-flex items-center whitespace-nowrap"
+            >
               {backLabel}
             </Link>
           )}

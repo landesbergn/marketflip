@@ -341,3 +341,42 @@ dialog.about-dialog::backdrop {
   text-underline-offset: 3px;
 }
 .ink-link:hover { opacity: 0.75; }
+
+/* ====================================================================
+   Flip-history dots (responsive)
+   ==================================================================== */
+
+.flip-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  max-width: 100%;
+}
+.flip-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+@media (min-width: 640px) {
+  .flip-dots { gap: 3px; }
+  .flip-dot { width: 18px; height: 18px; }
+}
+.flip-dot--yes {
+  background: var(--accent);
+}
+.flip-dot--no {
+  background: transparent;
+  border: 1.25px solid var(--ink);
+  opacity: 0.55;
+}
+
+/* Candidate ledger row — name + bar + pct, shrinks the name column on
+   mobile so the bar still gets meaningful space. */
+.candidate-row {
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.6fr) auto;
+}
+@media (min-width: 640px) {
+  .candidate-row {
+    grid-template-columns: 220px 1fr 80px;
+  }
+}

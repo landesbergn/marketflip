@@ -78,7 +78,7 @@ export function History({
       {open && (
         <>
           <p
-            className="mt-3 text-[24px] italic leading-snug m-0"
+            className="mt-3 text-[20px] sm:text-[24px] italic leading-snug m-0"
             style={{ color: "var(--ink)" }}
           >
             You saw{" "}
@@ -118,35 +118,17 @@ function FlipDots({ entries }: { entries: HistoryEntry[] }) {
   // entries arrive newest-first; reverse so the grid grows by appending
   // new dots at the end instead of shifting everything.
   const ordered = [...entries].reverse();
-  const size = 18;
-  const gap = 3;
   return (
-    <div
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap,
-        maxWidth: "100%",
-      }}
-    >
+    <div className="flip-dots">
       {ordered.map((e) => {
         const filled = e.flippedTo === "YES";
         // Stable key (timestamp only — Run 100 already uses unique
         // offsets per entry, and a manual flip uses Date.now() once).
-        // Index-based keys would change as the array length grows,
-        // causing React to unmount/remount existing dots.
         return (
           <div
             key={e.timestamp}
             title={`${e.flippedTo} · ${new Date(e.timestamp).toLocaleString()}`}
-            style={{
-              width: size,
-              height: size,
-              borderRadius: "50%",
-              background: filled ? "var(--accent)" : "transparent",
-              border: filled ? "none" : "1.25px solid var(--ink)",
-              opacity: filled ? 1 : 0.55,
-            }}
+            className={`flip-dot ${filled ? "flip-dot--yes" : "flip-dot--no"}`}
           />
         );
       })}
