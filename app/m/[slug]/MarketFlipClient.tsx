@@ -114,10 +114,9 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
         </div>
 
         {/* Right: The Reading */}
-        <div>
-          <p className="eyebrow mb-3">The reading</p>
+        <div className="flex flex-col gap-6">
           <p
-            className="text-[22px] italic leading-snug m-0"
+            className="text-[24px] italic leading-snug m-0"
             style={{ color: "var(--ink)" }}
           >
             The market sees{" "}
@@ -135,9 +134,9 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
             futures.
           </p>
 
-          <div className="mt-5">
-            <DotGrid yesProb={yesProbability} cols={20} size={16} gap={4} />
-            <div className="flex gap-5 mt-3">
+          <div>
+            <DotGrid yesProb={yesProbability} cols={20} size={18} gap={3} />
+            <div className="flex gap-6 mt-5">
               <LegendDot solid label={`${yesPct} ${yes?.label ?? "YES"}`} />
               <LegendDot solid={false} label={`${noPct} ${no?.label ?? "NO"}`} />
             </div>
@@ -180,18 +179,26 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
 
 function LegendDot({ solid, label }: { solid: boolean; label: string }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2.5">
       <div
         style={{
-          width: 10,
-          height: 10,
+          width: 12,
+          height: 12,
           borderRadius: "50%",
           background: solid ? "var(--accent)" : "transparent",
-          border: solid ? "none" : "1.25px solid var(--ink)",
-          opacity: solid ? 1 : 0.55,
+          border: solid ? "none" : "1.5px solid var(--ink)",
         }}
       />
-      <span className="eyebrow" style={{ fontSize: 10 }}>
+      <span
+        className="figure"
+        style={{
+          fontSize: 12,
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
+          fontWeight: 500,
+          color: "var(--ink)",
+        }}
+      >
         {label}
       </span>
     </div>

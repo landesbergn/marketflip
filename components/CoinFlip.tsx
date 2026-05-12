@@ -68,8 +68,15 @@ export function CoinFlip(props: CoinFlipProps) {
   };
 
   return (
-    <section className="flex flex-col items-start gap-7">
-      <div className="self-center">
+    <section className="flex flex-col items-center gap-6 text-center">
+      <button
+        type="button"
+        onClick={handleFlip}
+        disabled={phase === "flipping"}
+        aria-label={phase === "landed" ? "Flip again" : "Flip the coin"}
+        className="bg-transparent border-0 p-0 disabled:cursor-not-allowed"
+        style={{ cursor: phase === "flipping" ? "default" : "pointer" }}
+      >
         <div className="coin-stage">
           <div className="coin-shadow" data-state={phase} />
           <div
@@ -95,23 +102,20 @@ export function CoinFlip(props: CoinFlipProps) {
             </div>
           </div>
         </div>
-      </div>
+      </button>
 
       <div
-        className="w-full"
+        className="w-full flex flex-col items-center"
         aria-label={`Implied odds: ${outcomeYesLabel} ${yesPct}%, ${outcomeNoLabel} ${noPct}%`}
       >
         {phase === "idle" && (
           <>
-            <h2 className="text-2xl font-semibold tracking-tight">
-              Draw one future.
-            </h2>
-            <p className="mt-1.5 text-sm leading-relaxed text-[var(--ink-soft)] max-w-sm">
-              One flip, weighted to the odds.
-            </p>
-            <button onClick={handleFlip} className="btn-primary mt-5">
+            <button onClick={handleFlip} className="btn-primary">
               Flip the coin
             </button>
+            <p className="mt-3 text-sm leading-relaxed text-[var(--ink-soft)]">
+              One odds-weighted flip.
+            </p>
           </>
         )}
 
@@ -162,7 +166,7 @@ function Result({
     : matchupStatement(winnerLabel, loserLabel);
 
   return (
-    <div>
+    <div className="flex flex-col items-center text-center">
       <p className="eyebrow">The coin landed on</p>
       <p
         role="status"
@@ -196,7 +200,7 @@ function Result({
       <p className="figure mt-2 text-[11px] tracking-[0.15em] uppercase text-[var(--ink-mono)]">
         Market priced {landedLabel.toUpperCase()} at {landedOdds}%.
       </p>
-      <div className="mt-4 flex flex-wrap items-center gap-4">
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-4">
         <button onClick={onAgain} className="btn-outline">
           Flip again
         </button>
