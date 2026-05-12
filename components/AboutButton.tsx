@@ -78,12 +78,6 @@ export function AboutButton() {
               market, reads its implied probabilities, and lets you flip a coin
               weighted to those odds — once, or a hundred times.
             </p>
-            <p>
-              The point is small: a market that says &ldquo;91% YES&rdquo; doesn&rsquo;t always
-              resolve YES. Flipping it once shows you the other 9% in action.
-              Running 100 flips reveals the distribution the market is actually
-              describing.
-            </p>
           </div>
 
           <div className="mt-8 flex items-center gap-5">
