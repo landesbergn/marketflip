@@ -7,6 +7,8 @@ import {
   isLiteralYesNo,
   matchupStatement,
   questionToStatement,
+  verdictCopy,
+  verdictFor,
 } from "@/lib/fmt";
 import type { FlipOutcome } from "@/lib/types";
 
@@ -165,26 +167,32 @@ function Result({
     ? questionToStatement(question)
     : matchupStatement(winnerLabel, loserLabel);
 
+  const verdict = verdictFor(result, yesPct / 100);
+  const verdictMsg = verdictCopy(verdict, landedLabel.toUpperCase(), landedOdds);
+
   return (
     <div className="flex flex-col items-center text-center">
-      <p className="eyebrow">The coin landed on</p>
       <p
         role="status"
-        className="display mt-1"
+        className="display"
         style={{
-          fontSize: 64,
-          color: result === "YES" ? "var(--accent)" : "var(--ink)",
-          lineHeight: 0.95,
+          fontSize: 38,
+          color:
+            verdict === "SURPRISE" ? "var(--accent)" : "var(--ink)",
+          lineHeight: 1,
+          letterSpacing: "-0.025em",
           fontStyle: "italic",
         }}
       >
-        {landedLabel.toUpperCase()}.
+        {verdict}.
+      </p>
+      <p className="mt-3 text-[16px] leading-relaxed max-w-md text-[var(--ink-soft)]">
+        {verdictMsg}
       </p>
       {statement && (
-        <p className="mt-2 text-[20px] leading-snug max-w-md">
+        <p className="mt-2 text-[15px] italic leading-snug max-w-md text-[var(--ink-faint)]">
           {literal && result === "NO" ? (
             <span
-              className="italic text-[var(--ink-soft)]"
               style={{
                 textDecoration: "line-through",
                 textDecorationThickness: "1.5px",
@@ -193,14 +201,11 @@ function Result({
               {statement}
             </span>
           ) : (
-            <span className="italic">{statement}</span>
+            <span>{statement}</span>
           )}
         </p>
       )}
-      <p className="figure mt-2 text-[11px] tracking-[0.15em] uppercase text-[var(--ink-mono)]">
-        Market priced {landedLabel.toUpperCase()} at {landedOdds}%.
-      </p>
-      <div className="mt-4 flex flex-wrap items-center justify-center gap-4">
+      <div className="mt-5 flex flex-wrap items-center justify-center gap-4">
         <button onClick={onAgain} className="btn-outline">
           Flip again
         </button>

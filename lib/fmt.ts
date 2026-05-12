@@ -97,3 +97,41 @@ export function matchupStatement(
 ): string {
   return `${winnerLabel} beat ${loserLabel}.`;
 }
+
+export type Verdict = "AS EXPECTED" | "A TOSS-UP" | "SURPRISE";
+
+/**
+ * Classify a flip result by how the landed outcome compares to its
+ * implied probability. The product's whole point is teaching that
+ * a 91% market doesn't always resolve YES — verdicts surface that
+ * relationship for the user on every flip.
+ */
+export function verdictFor(
+  outcome: "YES" | "NO",
+  yesProbability: number
+): Verdict {
+  const landedProb = outcome === "YES" ? yesProbability : 1 - yesProbability;
+  if (landedProb >= 0.7) return "AS EXPECTED";
+  if (landedProb <= 0.3) return "SURPRISE";
+  return "A TOSS-UP";
+}
+
+/**
+ * Contextual sentence beneath the verdict.
+ * `outcomeLabel` should already be uppercased / team-cased as it'll display.
+ * `landedOdds` is an integer 0-100.
+ */
+export function verdictCopy(
+  verdict: Verdict,
+  outcomeLabel: string,
+  landedOdds: number
+): string {
+  switch (verdict) {
+    case "AS EXPECTED":
+      return `The market priced ${outcomeLabel} at ${landedOdds}% — the coin agreed.`;
+    case "A TOSS-UP":
+      return `Almost a coin flip — the market gave ${outcomeLabel} ${landedOdds}%.`;
+    case "SURPRISE":
+      return `The market gave ${outcomeLabel} just ${landedOdds}% — and yet, here we are.`;
+  }
+}
