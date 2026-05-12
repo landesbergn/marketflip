@@ -43,40 +43,9 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
         }}
       />
 
-      {/* Reading + Flip side-by-side on lg+, stacked below */}
+      {/* Flip + Reading side-by-side on lg+, stacked below */}
       <section className="pt-8 pb-6 grid gap-12 lg:grid-cols-2 items-start">
-        {/* Left: The Reading */}
-        <div>
-          <p className="eyebrow mb-3">The reading</p>
-          <p
-            className="text-[22px] italic leading-snug m-0"
-            style={{ color: "var(--ink)" }}
-          >
-            The market sees{" "}
-            <span className="not-italic" style={{ color: "var(--accent)" }}>
-              {yesToken}
-            </span>{" "}
-            in{" "}
-            <span className="not-italic" style={{ color: "var(--accent)" }}>
-              {yesPct}
-            </span>{" "}
-            of{" "}
-            <span className="not-italic" style={{ color: "var(--accent)" }}>
-              100
-            </span>{" "}
-            futures.
-          </p>
-
-          <div className="mt-5">
-            <DotGrid yesProb={yesProbability} cols={20} size={16} gap={4} />
-            <div className="flex gap-5 mt-3">
-              <LegendDot solid label={`${yesPct} ${yes?.label ?? "YES"}`} />
-              <LegendDot solid={false} label={`${noPct} ${no?.label ?? "NO"}`} />
-            </div>
-          </div>
-        </div>
-
-        {/* Right: Flip */}
+        {/* Left: Flip */}
         <div>
           <CoinFlip
             slug={market.slug}
@@ -142,6 +111,37 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
               />
             </div>
           )}
+        </div>
+
+        {/* Right: The Reading */}
+        <div>
+          <p className="eyebrow mb-3">The reading</p>
+          <p
+            className="text-[22px] italic leading-snug m-0"
+            style={{ color: "var(--ink)" }}
+          >
+            The market sees{" "}
+            <span className="not-italic" style={{ color: "var(--accent)" }}>
+              {yesToken}
+            </span>{" "}
+            in{" "}
+            <span className="not-italic" style={{ color: "var(--accent)" }}>
+              {yesPct}
+            </span>{" "}
+            of{" "}
+            <span className="not-italic" style={{ color: "var(--accent)" }}>
+              100
+            </span>{" "}
+            futures.
+          </p>
+
+          <div className="mt-5">
+            <DotGrid yesProb={yesProbability} cols={20} size={16} gap={4} />
+            <div className="flex gap-5 mt-3">
+              <LegendDot solid label={`${yesPct} ${yes?.label ?? "YES"}`} />
+              <LegendDot solid={false} label={`${noPct} ${no?.label ?? "NO"}`} />
+            </div>
+          </div>
         </div>
       </section>
 
