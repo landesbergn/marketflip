@@ -169,6 +169,14 @@ function Result({
 
   const verdict = verdictFor(result, yesPct / 100);
   const verdictMsg = verdictCopy(verdict, landedLabel.toUpperCase(), landedOdds);
+  // `statement`, `literal`, `winnerLabel`, `loserLabel` are intentionally
+  // unused here — the strikethrough restating-the-market line was removed
+  // in favor of just the verdict + contextual sentence. They remain in
+  // scope above so callers can pass them through unchanged if reintroduced.
+  void statement;
+  void literal;
+  void winnerLabel;
+  void loserLabel;
 
   return (
     <div className="flex flex-col items-center text-center">
@@ -189,22 +197,6 @@ function Result({
       <p className="mt-3 text-[16px] leading-relaxed max-w-md text-[var(--ink-soft)]">
         {verdictMsg}
       </p>
-      {statement && (
-        <p className="mt-2 text-[15px] italic leading-snug max-w-md text-[var(--ink-faint)]">
-          {literal && result === "NO" ? (
-            <span
-              style={{
-                textDecoration: "line-through",
-                textDecorationThickness: "1.5px",
-              }}
-            >
-              {statement}
-            </span>
-          ) : (
-            <span>{statement}</span>
-          )}
-        </p>
-      )}
       <div className="mt-5 flex flex-wrap items-center justify-center gap-4">
         <button onClick={onAgain} className="btn-outline">
           Flip again

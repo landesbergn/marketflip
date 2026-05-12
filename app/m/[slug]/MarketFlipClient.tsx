@@ -78,7 +78,7 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
           />
 
           {lastFlip && (
-            <div className="mt-4 flex flex-wrap items-center gap-5">
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-5">
               <SimulationPanel
                 slug={market.slug}
                 question={displayQuestion}
@@ -113,7 +113,7 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
           )}
         </div>
 
-        {/* Right: The Reading */}
+        {/* Right: The Reading + Your Flips */}
         <div className="flex flex-col gap-6">
           <p
             className="text-[24px] italic leading-snug m-0"
@@ -141,17 +141,17 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
               <LegendDot solid={false} label={`${noPct} ${no?.label ?? "NO"}`} />
             </div>
           </div>
+
+          {/* Personal flip distribution — alongside the implied one */}
+          <History
+            slug={market.slug}
+            refreshKey={historyKey}
+            yesProbability={yesProbability}
+            yesLabel={yes?.label}
+            noLabel={no?.label}
+          />
         </div>
       </section>
-
-      {/* Personal flip distribution */}
-      <History
-        slug={market.slug}
-        refreshKey={historyKey}
-        yesProbability={yesProbability}
-        yesLabel={yes?.label}
-        noLabel={no?.label}
-      />
 
       {lastSim && (
         <div className="pt-4">
