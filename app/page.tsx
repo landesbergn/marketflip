@@ -18,19 +18,9 @@ export default function HomePage() {
       <Nameplate />
       <hr className="border-0 border-t border-[var(--rule)] m-0" />
 
-      {/* Headline */}
-      <section className="rise rise-1 pt-12 pb-7">
-        <h1
-          className="display"
-          style={{ fontSize: 64, lineHeight: 1 }}
-        >
-          Flip a{" "}
-          <span style={{ fontStyle: "italic", color: "var(--accent)" }}>
-            market
-          </span>
-          .
-        </h1>
-        <p className="mt-4 max-w-[520px] text-[15px] leading-relaxed text-[var(--ink-soft)]">
+      {/* Tagline */}
+      <section className="rise rise-1 pt-6 pb-7">
+        <p className="max-w-[520px] text-[18px] leading-relaxed text-[var(--ink-soft)] italic">
           Each market is a coin weighted to its live odds.
         </p>
       </section>
@@ -41,7 +31,7 @@ export default function HomePage() {
       </section>
 
       {/* Today's list */}
-      <section className="rise rise-3 mt-7 pb-12">
+      <section className="rise rise-3 mt-8 pb-12">
         <p className="eyebrow mb-3.5">Today &middot; by 24h volume</p>
         <hr className="border-0 border-t border-[var(--ink)] m-0" />
         <Suspense

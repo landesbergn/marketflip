@@ -57,7 +57,7 @@ function CoinFace({ id, deep = false }: CoinFaceProps) {
   );
 }
 
-export function HeaderCoin({ size = 26 }: { size?: number }) {
+export function HeaderCoin({ size = 30 }: { size?: number }) {
   return (
     <span
       aria-hidden="true"

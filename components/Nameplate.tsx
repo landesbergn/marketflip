@@ -17,9 +17,9 @@ export function Nameplate({ showBack = false }: Props) {
           href="/"
           className="inline-flex items-center gap-3"
           style={{
-            fontSize: 22,
+            fontSize: 26,
             lineHeight: 1,
-            letterSpacing: "-0.018em",
+            letterSpacing: "-0.022em",
             color: "var(--ink)",
             fontWeight: 600,
           }}
