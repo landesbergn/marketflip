@@ -42,11 +42,12 @@ export function History({
 
   const yesCount = entries.filter((e) => e.flippedTo === "YES").length;
   const noCount = entries.length - yesCount;
-  const observed = entries.length > 0 ? (yesCount / entries.length) * 100 : 0;
-  const implied = Math.round(yesProbability * 100);
   const literal = isLiteralYesNo(yesLabel, noLabel);
   const yesToken = literal ? "YES" : yesLabel ?? "YES";
   const noToken = literal ? "NO" : noLabel ?? "NO";
+  // yesProbability prop kept for parity with the implied dot grid; not
+  // used here now that the implied/yours percentages were dropped.
+  void yesProbability;
 
   return (
     <section className="mt-10 pt-8 border-t border-[var(--rule)]">
@@ -83,14 +84,11 @@ export function History({
       {open && (
         <>
           <p className="mt-3 text-[22px] leading-snug max-w-[720px]">
-            Across your{" "}
+            You saw{" "}
+            <span style={{ color: "var(--accent)" }}>{yesToken}</span> in{" "}
+            <span style={{ color: "var(--accent)" }}>{yesCount}</span> of{" "}
             <span style={{ color: "var(--accent)" }}>{entries.length}</span>{" "}
-            {entries.length === 1 ? "flip" : "flips"}, {yesToken} came up{" "}
-            <span style={{ color: "var(--accent)" }}>{yesCount}</span>{" "}
-            {yesCount === 1 ? "time" : "times"}.{" "}
-            <span className="text-[var(--ink-soft)] italic">
-              Implied: {implied}%. Yours: {observed.toFixed(0)}%.
-            </span>
+            {entries.length === 1 ? "flip" : "flips"}.
           </p>
 
           <div className="mt-5">
