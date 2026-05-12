@@ -2,9 +2,10 @@
 import type { HistoryEntry } from "./types";
 
 export const HISTORY_KEY = "marketflip:history";
-// Cap is global across markets; "Run 100" can add 100 entries at once,
-// so we hold enough for several markets' worth of runs plus manual flips.
-export const HISTORY_CAP = 1000;
+// Cap is global across markets. Sized so a heavy user (e.g. 50 Run-100
+// presses on one market) still hits the localStorage budget comfortably:
+// ~5000 entries × ~200B = ~1MB, well inside the 5MB-per-origin limit.
+export const HISTORY_CAP = 5000;
 
 export function readHistory(): HistoryEntry[] {
   if (typeof window === "undefined") return [];

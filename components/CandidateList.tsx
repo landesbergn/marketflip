@@ -1,76 +1,39 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { CoinFlip } from "./CoinFlip";
-import { ShareButton } from "./ShareButton";
-import { History } from "./History";
-import type { ParentEvent, FlipOutcome, HistoryEntry } from "@/lib/types";
-import { track } from "@/lib/posthog";
-import { addFlipToHistory, addFlipsToHistory } from "@/lib/storage";
+import { useState } from "react";
+import { MarketFlipClient } from "@/app/m/[slug]/MarketFlipClient";
+import type { ParentEvent, FlippableMarket } from "@/lib/types";
 import { extractCandidateName } from "@/lib/fmt";
-import { flip as flipOnce } from "@/lib/flip";
-import { formatSingleFlipShare } from "@/lib/share";
-
-const RUN_COUNT = 100;
 
 export function CandidateList({ event }: { event: ParentEvent }) {
   const [selected, setSelected] = useState<string | null>(null);
-  const [lastFlip, setLastFlip] = useState<FlipOutcome | null>(null);
-  const [historyKey, setHistoryKey] = useState(0);
-  const [running, setRunning] = useState(false);
-  const runningRef = useRef(false);
 
   const sub = event.subMarkets.find((s) => s.slug === selected) ?? null;
-  const subUrl =
-    typeof window !== "undefined" && sub
-      ? window.location.href
-      : sub?.slug ?? "";
 
-  const handleRunHundred = () => {
-    if (!sub || runningRef.current) return;
-    runningRef.current = true;
-    setRunning(true);
-
-    let done = 0;
-    let yesInRun = 0;
-    const base = Date.now();
-    const perFrame = 4;
-
-    const tick = () => {
-      const batch: HistoryEntry[] = [];
-      for (let i = 0; i < perFrame && done < RUN_COUNT; i++) {
-        const outcome = flipOnce(sub.yesProbability);
-        if (outcome === "YES") yesInRun++;
-        batch.push({
-          slug: sub.slug,
-          question: sub.question,
-          outcomeLabel: sub.question,
-          flippedTo: outcome,
-          impliedProbability: sub.yesProbability,
-          timestamp: base + done,
-        });
-        done++;
-      }
-      addFlipsToHistory(batch);
-      setHistoryKey((k) => k + 1);
-
-      if (done < RUN_COUNT) {
-        requestAnimationFrame(tick);
-      } else {
-        runningRef.current = false;
-        setRunning(false);
-        track({
-          name: "simulation_run",
-          props: {
-            slug: sub.slug,
-            n: RUN_COUNT,
-            observed_yes_count: yesInRun,
+  // Re-shape the picked sub-market into a binary FlippableMarket so the
+  // same MarketFlipClient that powers the binary market page renders
+  // here — same Reading + flip + history layout.
+  const synthetic: FlippableMarket | null = sub
+    ? {
+        id: sub.slug,
+        slug: sub.slug,
+        question: sub.question,
+        description: event.description,
+        outcomes: [
+          {
+            label: extractCandidateName(sub.question),
+            probability: sub.yesProbability,
           },
-        });
+          {
+            label: "Someone else",
+            probability: Math.max(0, 1 - sub.yesProbability),
+          },
+        ],
+        endDate: event.endDate,
+        volume24h: 0,
+        url: event.url,
       }
-    };
-    requestAnimationFrame(tick);
-  };
+    : null;
 
   return (
     <div>
@@ -82,7 +45,7 @@ export function CandidateList({ event }: { event: ParentEvent }) {
         </p>
       </section>
 
-      <section className="pb-12">
+      <section className="pb-10">
         <p className="eyebrow mb-3">Pick one to flip</p>
         <hr className="border-0 border-t border-[var(--ink)] m-0" />
         <ul className="m-0 p-0 list-none">
@@ -92,10 +55,7 @@ export function CandidateList({ event }: { event: ParentEvent }) {
             return (
               <li key={s.slug} className="border-b border-[var(--rule)]">
                 <button
-                  onClick={() => {
-                    setSelected(s.slug);
-                    setLastFlip(null);
-                  }}
+                  onClick={() => setSelected(s.slug)}
                   className="row-hover w-full text-left grid items-center gap-6 px-3 py-5"
                   style={{
                     gridTemplateColumns: "220px 1fr 80px",
@@ -116,10 +76,7 @@ export function CandidateList({ event }: { event: ParentEvent }) {
                   </span>
                   <span
                     className="text-right text-[28px] italic"
-                    style={{
-                      color: "var(--accent)",
-                      lineHeight: 1,
-                    }}
+                    style={{ color: "var(--accent)", lineHeight: 1 }}
                   >
                     {pct}%
                   </span>
@@ -130,63 +87,11 @@ export function CandidateList({ event }: { event: ParentEvent }) {
         </ul>
       </section>
 
-      {sub && (
-        <section className="pt-10 mt-10 border-t-2 border-[var(--ink)]">
-          <CoinFlip
-            slug={sub.slug}
-            question={extractCandidateName(sub.question) + " wins."}
-            yesProbability={sub.yesProbability}
-            outcomeYesLabel={extractCandidateName(sub.question)}
-            outcomeNoLabel="Someone else"
-            onFlipComplete={(o: FlipOutcome) => {
-              setLastFlip(o);
-              track({
-                name: "flip_executed",
-                props: {
-                  slug: sub.slug,
-                  outcome: o,
-                  implied_probability: sub.yesProbability,
-                },
-              });
-              addFlipToHistory({
-                slug: sub.slug,
-                question: sub.question,
-                outcomeLabel: sub.question,
-                flippedTo: o,
-                impliedProbability: sub.yesProbability,
-                timestamp: Date.now(),
-              });
-              setHistoryKey((k) => k + 1);
-            }}
-          />
-
-          {lastFlip && (
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-5">
-              <button
-                className="btn-link"
-                onClick={handleRunHundred}
-                disabled={running}
-              >
-                {running ? "Running…" : "Run 100 →"}
-              </button>
-              <ShareButton
-                slug={sub.slug}
-                mode="single"
-                text={formatSingleFlipShare({
-                  question: sub.question,
-                  yesProbability: sub.yesProbability,
-                  flipped: lastFlip,
-                  url: subUrl,
-                })}
-              />
-            </div>
-          )}
-
-          <History
-            slug={sub.slug}
-            refreshKey={historyKey}
-            yesProbability={sub.yesProbability}
-          />
+      {synthetic && sub && (
+        <section className="pt-2 mt-2 border-t-2 border-[var(--ink)]">
+          {/* `key` ensures MarketFlipClient remounts cleanly when the user
+              picks a different candidate so its internal state resets. */}
+          <MarketFlipClient key={sub.slug} market={synthetic} />
         </section>
       )}
     </div>

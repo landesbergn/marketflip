@@ -28,17 +28,20 @@ function normalizeMarket(m: GammaMarket): FlippableMarket | null {
   return {
     id: m.id,
     slug: m.slug,
-    question: m.question,
-    description: m.description,
+    question: (m.question ?? "").trim(),
+    description: m.description?.trim(),
     outcomes: labels.map((label, i) => ({
-      label,
+      label: label.trim(),
       probability: prices[i] ?? 0,
     })),
     endDate: m.endDate ?? "",
     volume24h: m.volume24hr ?? 0,
     url: `${POLYMARKET_BASE}/market/${m.slug}`,
     parentEvent: m.events && m.events[0]
-      ? { slug: m.events[0].slug, question: m.events[0].title }
+      ? {
+          slug: m.events[0].slug,
+          question: (m.events[0].title ?? "").trim(),
+        }
       : undefined,
   };
 }
@@ -73,11 +76,14 @@ function normalizeEvent(e: GammaEvent): ParentEvent | null {
 
   return {
     slug: e.slug,
-    question: e.title,
-    description: e.description,
+    question: (e.title ?? "").trim(),
+    description: e.description?.trim(),
     endDate: e.endDate ?? "",
     url: `${POLYMARKET_BASE}/event/${e.slug}`,
-    subMarkets,
+    subMarkets: subMarkets.map((s) => ({
+      ...s,
+      question: s.question.trim(),
+    })),
   };
 }
 
@@ -140,10 +146,10 @@ function normalizeEventAsSearchHit(
   return {
     id: e.id,
     slug: e.slug,
-    question: e.title,
-    description: e.description,
+    question: (e.title ?? "").trim(),
+    description: e.description?.trim(),
     outcomes: labels.map((label, i) => ({
-      label,
+      label: label.trim(),
       probability: prices[i] ?? 0,
     })),
     endDate: e.endDate ?? "",

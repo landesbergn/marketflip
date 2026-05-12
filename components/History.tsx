@@ -114,10 +114,12 @@ export function History({
 }
 
 function FlipDots({ entries }: { entries: HistoryEntry[] }) {
-  // Chronological: oldest → top-left, newest → bottom-right.
-  // entries arrive newest-first from readHistory; reverse so the grid
-  // fills left-to-right in the order the flips actually happened.
-  const ordered = [...entries].reverse();
+  // Cap the visualization at the most recent 100 flips so the column
+  // mirrors the 100-dot implied grid above, regardless of how many
+  // total flips the user has accumulated.
+  const window = entries.slice(0, 100);
+  // Chronological within the window: oldest → top-left, newest → bottom-right.
+  const ordered = [...window].reverse();
   const size = 18;
   const gap = 3;
   return (

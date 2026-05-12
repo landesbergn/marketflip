@@ -22,7 +22,9 @@ export function ShareButton({ text, slug, mode }: Props) {
       navigator.canShare({ text })
     ) {
       try {
-        await navigator.share({ title: "MarketFlip", text });
+        // No title — some share targets concatenate title + text and
+        // we don't want a leading "MarketFlip" line glued to the share.
+        await navigator.share({ text });
         return;
       } catch {
         // fall through to clipboard
