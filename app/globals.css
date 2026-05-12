@@ -536,7 +536,10 @@ dialog.about-dialog::backdrop {
   backdrop-filter: saturate(140%) blur(10px);
   -webkit-backdrop-filter: saturate(140%) blur(10px);
   border-top: 1px solid var(--rule);
-  padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 0px));
+  /* env(safe-area-inset-bottom) already provides the iOS home-indicator
+     clearance; keep the inner bottom padding small so the bar hugs the
+     buttons. */
+  padding: 8px 0 calc(4px + env(safe-area-inset-bottom, 0px));
   box-shadow: 0 -16px 24px -16px rgba(10, 10, 10, 0.08);
 }
 
