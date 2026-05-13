@@ -1,20 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { track } from "@/lib/posthog";
 
 type Props = {
   text: string;
-  slug: string;
-  mode: "single" | "sim";
 };
 
-export function ShareButton({ text, slug, mode }: Props) {
+export function ShareButton({ text }: Props) {
   const [copied, setCopied] = useState(false);
 
   const onClick = async () => {
-    track({ name: "result_shared", props: { slug, mode } });
-
     if (
       typeof navigator !== "undefined" &&
       navigator.share &&

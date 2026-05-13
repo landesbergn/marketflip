@@ -3,7 +3,6 @@
 import { useRef, useState } from "react";
 import { CoinFlip, type CoinFlipHandle } from "@/components/CoinFlip";
 import { ShareButton } from "@/components/ShareButton";
-import { PageViewTracker } from "@/components/PageViewTracker";
 import { DotGrid } from "@/components/DotGrid";
 import { GaugeBar } from "@/components/GaugeBar";
 import { History } from "@/components/History";
@@ -13,7 +12,6 @@ import type {
   FlipOutcome,
   HistoryEntry,
 } from "@/lib/types";
-import { track } from "@/lib/posthog";
 import {
   addFlipToHistory,
   addFlipsToHistory,
@@ -83,14 +81,6 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
 
   const handleFlipComplete = (o: FlipOutcome) => {
     setLastFlip(o);
-    track({
-      name: "flip_executed",
-      props: {
-        slug: market.slug,
-        outcome: o,
-        implied_probability: yesProbability,
-      },
-    });
     addFlipToHistory({
       slug: market.slug,
       question: market.question,
@@ -135,14 +125,6 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
       } else {
         runningRef.current = false;
         setRunning(false);
-        track({
-          name: "simulation_run",
-          props: {
-            slug: market.slug,
-            n: RUN_COUNT,
-            observed_yes_count: yesInRun,
-          },
-        });
       }
     };
     requestAnimationFrame(tick);
@@ -198,7 +180,6 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
               noLabel: no?.label,
               url,
             });
-            track({ name: "result_shared", props: { slug: market.slug, mode: "single" } });
             if (
               typeof navigator !== "undefined" &&
               navigator.share &&
@@ -225,13 +206,6 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
 
   return (
     <>
-      <PageViewTracker
-        event={{
-          name: "market_viewed",
-          props: { slug: market.slug, source: "direct" },
-        }}
-      />
-
       {/* ── Header: meta + question + resolution criteria ──────── */}
       <section className="pt-5 sm:pt-10 pb-3 sm:pb-6">
         <p className="eyebrow">{metaParts.join(" · ") || "Live market"}</p>
@@ -329,8 +303,6 @@ export function MarketFlipClient({ market }: { market: FlippableMarket }) {
                 {running ? "Running…" : "Run 100 →"}
               </button>
               <ShareButton
-                slug={market.slug}
-                mode="single"
                 text={formatSingleFlipShare({
                   question: displayQuestion,
                   yesProbability,

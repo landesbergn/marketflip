@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { TrendingGrid } from "@/components/TrendingGrid";
 import { SearchInput } from "@/components/SearchInput";
-import { PageViewTracker } from "@/components/PageViewTracker";
 import { Nameplate } from "@/components/Nameplate";
 
 export const metadata = {
@@ -15,8 +14,6 @@ export default function HomePage() {
     <>
       <Nameplate />
       <main className="mx-auto max-w-[1024px] px-5 sm:px-8 lg:px-14">
-        <PageViewTracker event={{ name: "home_viewed" }} />
-
         {/* Tagline */}
         <section className="rise rise-1 pt-4 sm:pt-6 pb-6 sm:pb-7">
           <p className="max-w-[520px] text-[18px] leading-relaxed text-[var(--ink-soft)] italic">

@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { FlippableMarket } from "@/lib/types";
-import { track } from "@/lib/posthog";
 
 /**
  * Underlined search input that filters/searches live as you type.
@@ -23,7 +22,6 @@ export function SearchInput() {
     let cancelled = false;
     const id = setTimeout(async () => {
       setLoading(true);
-      track({ name: "market_searched", props: { query: q.trim() } });
       try {
         const res = await fetch(
           `/api/markets/search?q=${encodeURIComponent(q.trim())}`
