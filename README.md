@@ -1,3 +1,3 @@
-# MarketFlip -- [marketflip.xyz](marketflip.xyz)
+# MarketFlip - [marketflip.xyz](https://www.marketflip.xyz/)
 
-MarketFlip pulls a live Polymarket market, reads its current implied probabilities, and lets you flip a coin weighted to those odds.
+Pull a live Polymarket market, reads its current implied probabilities, and flip a coin weighted to those odds.
